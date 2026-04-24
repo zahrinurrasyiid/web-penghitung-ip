@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPgrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="tema-gelap">
+  <div class="lapisan-latar"></div>
+  <div id="kontainerNotifikasi" class="kontainer-notifikasi"></div>
+
+  <section id="tampilanLanding" class="halaman-landing">
+    <section class="hero-index kartu-kaca">
+      <h1 class="judul-logo" data-judul-animasi>IPgrade</h1>
+      <div class="bingkai-ketik">
+        <p id="teksKetikanIndex" class="teks-ketik"></p>
+      </div>
+      <button id="tombolMasukAutentikasi" class="tombol tombol-utama tombol-besar">Masuk ke Autentikasi</button>
+    </section>
+  </section>
+
+  <section id="tampilanAutentikasi" class="halaman-autentikasi tersembunyi">
+    <main class="kontainer-autentikasi">
+      <section class="panel-autentikasi kartu-kaca">
+        <div class="kepala-panel">
+          <h1 class="judul-halaman" data-judul-animasi>IPgrade</h1>
+          <p class="teks-pendamping">Login atau register untuk mulai mengelola kelas, mahasiswa, dan semester.</p>
+        </div>
+
+        <div id="kontainerTabAutentikasi" class="kontainer-tab">
+          <div class="daftar-tab">
+            <button type="button" class="tombol-tab aktif" data-target-tab="register">Register</button>
+            <button type="button" class="tombol-tab" data-target-tab="login">Login</button>
+          </div>
+
+          <section class="panel-tab aktif" data-panel-tab="register">
+            <form id="formRegister" class="form-vertikal">
+              <label class="label-input" for="registerUsername">Username</label>
+              <input id="registerUsername" type="text" class="input-glow" placeholder="Minimal 4 karakter">
+
+              <label class="label-input" for="registerPassword">Password</label>
+              <div class="bungkus-password">
+                <input id="registerPassword" type="password" class="input-glow input-password" placeholder="Masukkan password">
+                <button type="button" class="tombol-lihat-password" data-target-password="registerPassword" aria-label="Lihat password">Lihat</button>
+              </div>
+
+              <label class="label-input" for="registerVerifikasi">Verifikasi Password</label>
+              <div class="bungkus-password">
+                <input id="registerVerifikasi" type="password" class="input-glow input-password" placeholder="Ulangi password">
+                <button type="button" class="tombol-lihat-password" data-target-password="registerVerifikasi" aria-label="Lihat verifikasi password">Lihat</button>
+              </div>
+
+              <button type="submit" class="tombol tombol-utama tombol-penuh">Daftarkan Akun</button>
+            </form>
+          </section>
+
+          <section class="panel-tab" data-panel-tab="login">
+            <form id="formLogin" class="form-vertikal">
+              <label class="label-input" for="loginUsername">Username</label>
+              <input id="loginUsername" type="text" class="input-glow" placeholder="Masukkan username">
+
+              <label class="label-input" for="loginPassword">Password</label>
+              <div class="bungkus-password">
+                <input id="loginPassword" type="password" class="input-glow input-password" placeholder="Masukkan password">
+                <button type="button" class="tombol-lihat-password" data-target-password="loginPassword" aria-label="Lihat password login">Lihat</button>
+              </div>
+
+              <div class="baris-pengingat-login">
+                <label class="pilihan-centang" for="ingatAkunLogin">
+                  <input id="ingatAkunLogin" type="checkbox">
+                  <span>Ingat akun saya</span>
+                </label>
+                <button id="tombolLupakanAkun" type="button" class="tombol-lupakan-akun tersembunyi">Lupakan akun tersimpan</button>
+              </div>
+
+              <button type="submit" class="tombol tombol-utama tombol-penuh">Masuk ke Aplikasi</button>
+            </form>
+          </section>
+        </div>
+
+        <button id="tombolKembaliLanding" class="tautan-kembali">Kembali ke Halaman Awal</button>
+      </section>
+    </main>
+  </section>
+
+  <section id="tampilanAplikasi" class="tersembunyi">
+    <div class="tata-letak-aplikasi">
+      <aside id="sidebarAplikasi" class="sidebar"></aside>
+
+      <main class="konten-aplikasi">
+        <div id="areaScrollAplikasi" class="area-scroll-aplikasi" tabindex="-1">
+          <section id="halamanDashboard" data-halaman-aplikasi="dashboard" class="halaman-aplikasi">
+            <header class="kepala-aplikasi kartu-kaca">
+              <div>
+                <span class="label-mikro">Ringkasan Utama</span>
+                <h1 class="judul-halaman" data-judul-animasi>Dashboard</h1>
+                <p class="teks-pendamping">Pantau jumlah kelas, jumlah mahasiswa, dan countdown kelas yang sedang aktif.</p>
+              </div>
+              <div class="grup-chip">
+                <span class="chip-info">Pengguna aktif: <strong id="namaPenggunaDashboard">-</strong></span>
+              </div>
+            </header>
+
+            <section class="grid-ringkasan-dashboard">
+              <article class="kartu-kaca kartu-ringkas">
+                <span class="label-kartu">Jumlah Kelas</span>
+                <strong id="jumlahKelasDashboard" class="angka-statistik">0</strong>
+                <small class="teks-tipis">Total kelas yang masih aktif.</small>
+              </article>
+              <article class="kartu-kaca kartu-ringkas">
+                <span class="label-kartu">Jumlah Mahasiswa</span>
+                <strong id="jumlahMahasiswaDashboard" class="angka-statistik">0</strong>
+                <small class="teks-tipis">Akumulasi seluruh mahasiswa dari semua kelas.</small>
+              </article>
+            </section>
+
+            <section class="kartu-kaca panel-dashboard-besar">
+              <div class="judul-panel judul-panel-dengan-aksi">
+                <div>
+                  <span class="label-mikro">Countdown Kelas</span>
+                  <h2 class="judul-panel-besar">Daftar Kedaluwarsa Kelas</h2>
+                </div>
+                <div id="kontrolPaginationDashboard" class="kontrol-pagination"></div>
+              </div>
+
+              <div id="daftarCountdownKelasDashboard" class="daftar-kelas-dashboard"></div>
+            </section>
+          </section>
+
+          <section id="halamanKelas" data-halaman-aplikasi="kelas" class="halaman-aplikasi tersembunyi">
+            <header class="kepala-aplikasi kartu-kaca">
+              <div>
+                <span class="label-mikro">Kelola Kelas dan Mahasiswa</span>
+                <h1 class="judul-halaman" data-judul-animasi>Manajemen Kelas</h1>
+                <p class="teks-pendamping">Buat kelas, tambah mahasiswa, atur timer kelas, dan kelola data mahasiswa dalam satu area.</p>
+              </div>
+              <div class="grup-chip">
+                <span class="chip-info">Maksimal 50 mahasiswa per kelas</span>
+              </div>
+            </header>
+
+            <section class="grid-kelas">
+              <article class="kartu-kaca panel-kelas">
+                <div class="judul-panel">
+                  <span class="label-mikro">Form Kelas</span>
+                  <h2 class="judul-panel-besar">Tambah atau Edit Kelas</h2>
+                </div>
+
+                <form id="formKelas" class="form-vertikal">
+                  <input id="idKelasTersembunyi" type="hidden">
+                  <label class="label-input" for="inputNamaKelas">Nama Kelas</label>
+                  <input id="inputNamaKelas" type="text" class="input-glow" placeholder="Contoh: TI 2024 A">
+                  <button type="submit" class="tombol tombol-utama">Simpan Kelas</button>
+                </form>
+
+                <div class="pemisah-panel"></div>
+
+                <div class="judul-panel">
+                  <span class="label-mikro">Form Mahasiswa</span>
+                  <h2 class="judul-panel-besar">Tambah atau Edit Mahasiswa</h2>
+                </div>
+
+                <form id="formMahasiswa" class="form-vertikal">
+                  <input id="idMahasiswaTersembunyi" type="hidden">
+                  <label class="label-input" for="pilihanKelasMahasiswa">Pilih Kelas</label>
+                  <select id="pilihanKelasMahasiswa" class="input-glow"></select>
+
+                  <label class="label-input" for="inputNamaMahasiswa">Nama Mahasiswa</label>
+                  <input id="inputNamaMahasiswa" type="text" class="input-glow" placeholder="Masukkan nama mahasiswa">
+
+                  <label class="label-input" for="inputNimMahasiswa">NIM Mahasiswa</label>
+                  <input id="inputNimMahasiswa" type="text" class="input-glow" placeholder="Masukkan NIM mahasiswa">
+
+                  <button type="submit" class="tombol tombol-utama">Simpan Mahasiswa</button>
+                </form>
+              </article>
+
+              <article class="kartu-kaca panel-kelas">
+                <div class="judul-panel">
+                  <span class="label-mikro">Daftar Kelas</span>
+                  <h2 class="judul-panel-besar">Kelas dan Mahasiswa</h2>
+                </div>
+
+                <div id="daftarKelasManajemen" class="daftar-kelas-manajemen"></div>
+              </article>
+            </section>
+          </section>
+
+          <section id="halamanSemester" data-halaman-aplikasi="semester" class="halaman-aplikasi tersembunyi">
+            <header class="kepala-aplikasi kartu-kaca">
+              <div>
+                <span class="label-mikro">Semester Mahasiswa</span>
+                <h1 class="judul-halaman" data-judul-animasi>Data Semester</h1>
+                <p class="teks-pendamping">Pilih kelas, pilih mahasiswa, lalu kelola semester dan mata kuliah milik mahasiswa tersebut.</p>
+              </div>
+            </header>
+
+            <section class="grid-semester-baru">
+              <article class="kartu-kaca panel-semester">
+                <div class="judul-panel">
+                  <span class="label-mikro">Pilih Data</span>
+                  <h2 class="judul-panel-besar">Kelas dan Mahasiswa</h2>
+                </div>
+
+                <div class="form-vertikal">
+                  <label class="label-input" for="pilihanKelasSemester">Pilih Kelas</label>
+                  <select id="pilihanKelasSemester" class="input-glow"></select>
+
+                  <label class="label-input" for="pilihanMahasiswaSemester">Pilih Mahasiswa</label>
+                  <select id="pilihanMahasiswaSemester" class="input-glow"></select>
+
+                  <div id="ringkasanPilihanSemester" class="kotak-info-pilihan">Pilih kelas dan mahasiswa untuk mulai mengelola semester.</div>
+                </div>
+
+                <div class="pemisah-panel"></div>
+
+                <div class="judul-panel">
+                  <span class="label-mikro">Form Semester</span>
+                  <h2 class="judul-panel-besar">Tambah atau Edit Semester</h2>
+                </div>
+
+                <form id="formSemester" class="form-vertikal">
+                  <input id="idSemesterTersembunyi" type="hidden">
+
+                  <label class="label-input" for="inputNomorSemester">Nomor Semester</label>
+                  <input id="inputNomorSemester" type="number" class="input-glow" min="1" max="14" placeholder="Masukkan nomor semester 1-14">
+
+                  <div class="baris-kepala-matkul">
+                    <div>
+                      <span class="label-input">Daftar Mata Kuliah</span>
+                      <p class="teks-tipis">Maksimal 9 mata kuliah per semester.</p>
+                    </div>
+                    <button id="tombolTambahMataKuliah" type="button" class="tombol tombol-garis">Tambah Mata Kuliah</button>
+                  </div>
+
+                  <div id="daftarMataKuliahForm" class="daftar-mata-kuliah-form"></div>
+
+                  <div class="baris-tombol-form">
+                    <button type="submit" class="tombol tombol-utama">Simpan Semester</button>
+                    <button id="tombolResetFormSemester" type="button" class="tombol tombol-garis">Reset Form</button>
+                  </div>
+                </form>
+              </article>
+
+              <article class="kartu-kaca panel-semester">
+                <div class="judul-panel">
+                  <span class="label-mikro">Semester Tersimpan</span>
+                  <h2 class="judul-panel-besar">Daftar Semester Mahasiswa</h2>
+                </div>
+
+                <div id="daftarSemesterTersimpan" class="daftar-semester-tersimpan"></div>
+              </article>
+            </section>
+          </section>
+
+          <section id="halamanHasil" data-halaman-aplikasi="hasil" class="halaman-aplikasi tersembunyi">
+            <header class="kepala-aplikasi kartu-kaca">
+              <div>
+                <span class="label-mikro">Hasil Mahasiswa</span>
+                <h1 class="judul-halaman" data-judul-animasi>Hasil</h1>
+                <p class="teks-pendamping">Pilih kelas dan mahasiswa untuk melihat IPS, IPK, detail semester, dan grafik perkembangan akademik.</p>
+              </div>
+            </header>
+
+            <section class="grid-hasil">
+              <article class="kartu-kaca panel-hasil-kiri">
+                <div class="judul-panel">
+                  <span class="label-mikro">Pilih Target</span>
+                  <h2 class="judul-panel-besar">Kelas dan Mahasiswa</h2>
+                </div>
+
+                <div class="form-vertikal">
+                  <label class="label-input" for="pilihanKelasHasil">Pilih Kelas</label>
+                  <select id="pilihanKelasHasil" class="input-glow"></select>
+
+                  <label class="label-input" for="pilihanMahasiswaHasil">Pilih Mahasiswa</label>
+                  <select id="pilihanMahasiswaHasil" class="input-glow"></select>
+
+                  <div id="ringkasanPilihanHasil" class="kotak-info-pilihan">Pilih kelas dan mahasiswa untuk melihat hasil.</div>
+                </div>
+              </article>
+
+              <article class="kartu-kaca panel-hasil-kanan">
+                <div id="kontainerTabHasil" class="kontainer-tab tanpa-padding">
+                  <div class="daftar-tab">
+                    <button type="button" class="tombol-tab aktif" data-target-tab="ringkasan">Ringkasan Hasil</button>
+                    <button type="button" class="tombol-tab" data-target-tab="grafik">Grafik Akademik</button>
+                  </div>
+
+                  <section class="panel-tab aktif" data-panel-tab="ringkasan">
+                    <div id="pesanKosongHasil" class="keadaan-kosong">Belum ada mahasiswa yang dipilih atau data semester masih kosong.</div>
+                    <div id="kartuProfilHasil" class="grid-identitas-hasil"></div>
+                    <div id="kartuStatistikHasil" class="grid-statistik-hasil"></div>
+                    <div id="daftarAccordionSemester" class="daftar-akordeon-semester"></div>
+                  </section>
+
+                  <section class="panel-tab" data-panel-tab="grafik">
+                    <div id="statusGrafikKosong" class="keadaan-kosong">Grafik akademik akan tampil setelah ada minimal satu semester.</div>
+                    <div class="bungkus-grafik">
+                      <canvas id="kanvasGrafikIps"></canvas>
+                    </div>
+                  </section>
+                </div>
+              </article>
+            </section>
+          </section>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <script src="../js/script.js"></script>
+</body>
+</html>
+

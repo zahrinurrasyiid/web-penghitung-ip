@@ -1,0 +1,1119 @@
+﻿:root {
+  --warna-latar: #04050a;
+  --warna-panel: rgba(14, 17, 32, 0.84);
+  --warna-panel-pekat: rgba(10, 12, 24, 0.94);
+  --warna-garis: rgba(124, 108, 255, 0.22);
+  --warna-garis-terang: rgba(78, 189, 255, 0.38);
+  --warna-putih: #f7f8ff;
+  --warna-teks: rgba(239, 241, 255, 0.92);
+  --warna-teks-lembut: rgba(205, 211, 255, 0.64);
+  --warna-ungu: #7c6cff;
+  --warna-biru: #42c7ff;
+  --warna-merah: #ff6b91;
+  --bayangan-utama: 0 18px 60px rgba(0, 0, 0, 0.34);
+  --bayangan-ungu: 0 0 0 1px rgba(124, 108, 255, 0.14), 0 18px 40px rgba(33, 24, 87, 0.45);
+  --font-judul: "Pixelify Sans", sans-serif;
+  --font-utama: "Outfit", sans-serif;
+  --radius-besar: 28px;
+  --radius-sedang: 18px;
+  --radius-kecil: 12px;
+  --transisi-halus: all 0.28s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  --lebar-sidebar: 292px;
+  min-height: 100%;
+  font-family: var(--font-utama);
+  color: var(--warna-teks);
+  overflow-x: hidden;
+  background: var(--latar-body);
+  transition: background 0.28s ease, color 0.28s ease;
+}
+
+body.sidebar-ciut {
+  --lebar-sidebar: 102px;
+}
+
+body.mode-aplikasi {
+  height: 100vh;
+  overflow: hidden;
+}
+
+body.tema-gelap {
+  --warna-latar: #04050a;
+  --warna-panel: rgba(14, 17, 32, 0.84);
+  --warna-panel-pekat: rgba(10, 12, 24, 0.94);
+  --warna-garis: rgba(124, 108, 255, 0.22);
+  --warna-garis-terang: rgba(78, 189, 255, 0.38);
+  --warna-putih: #f7f8ff;
+  --warna-teks: rgba(239, 241, 255, 0.92);
+  --warna-teks-lembut: rgba(205, 211, 255, 0.64);
+  --warna-ungu: #7c6cff;
+  --warna-biru: #42c7ff;
+  --warna-kuning: #ffe66d;
+  --warna-merah: #ff6b91;
+  --latar-body:
+    radial-gradient(circle at 20% 20%, rgba(124, 108, 255, 0.28), transparent 24%),
+    radial-gradient(circle at 80% 18%, rgba(66, 199, 255, 0.22), transparent 22%),
+    radial-gradient(circle at 50% 85%, rgba(166, 93, 255, 0.16), transparent 26%),
+    linear-gradient(145deg, #03040a 0%, #090b16 48%, #05060d 100%);
+  --latar-panel:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 28%),
+    linear-gradient(145deg, rgba(11, 13, 25, 0.98), rgba(10, 12, 24, 0.92));
+  --latar-sidebar: linear-gradient(180deg, rgba(9, 10, 21, 0.96), rgba(6, 7, 14, 0.94));
+  --latar-input: rgba(255, 255, 255, 0.04);
+  --latar-chip: rgba(255, 255, 255, 0.04);
+  --latar-kartu-mini: rgba(255, 255, 255, 0.03);
+  --gradient-judul: linear-gradient(90deg, #ffffff, #8f86ff, #49dcff, #e5e0ff, #ffffff);
+  --gradient-tombol-utama: linear-gradient(135deg, var(--warna-biru), #d9efff 52%, #c7bfff 100%);
+  --warna-tombol-utama: #05070f;
+  --bayangan-utama: 0 18px 60px rgba(0, 0, 0, 0.34);
+  --bayangan-ungu: 0 0 0 1px rgba(124, 108, 255, 0.14), 0 18px 40px rgba(33, 24, 87, 0.45);
+}
+
+body.tema-terang {
+  --warna-latar: #f6f9ff;
+  --warna-panel: rgba(255, 255, 255, 0.92);
+  --warna-panel-pekat: rgba(255, 255, 255, 0.98);
+  --warna-garis: rgba(10, 54, 112, 0.16);
+  --warna-garis-terang: rgba(228, 177, 46, 0.44);
+  --warna-putih: #061225;
+  --warna-teks: rgba(8, 20, 39, 0.92);
+  --warna-teks-lembut: rgba(18, 39, 70, 0.66);
+  --warna-ungu: #1d3d7a;
+  --warna-biru: #0b4c93;
+  --warna-kuning: #f3c72f;
+  --warna-merah: #b51f4b;
+  --latar-body:
+    radial-gradient(circle at 16% 14%, rgba(13, 76, 147, 0.12), transparent 24%),
+    radial-gradient(circle at 84% 16%, rgba(243, 199, 47, 0.20), transparent 22%),
+    linear-gradient(145deg, #ffffff 0%, #f4f8ff 52%, #eaf1fb 100%);
+  --latar-panel:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(249, 252, 255, 0.88)),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(240, 246, 255, 0.94));
+  --latar-sidebar: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.96));
+  --latar-input: rgba(9, 54, 112, 0.055);
+  --latar-chip: rgba(9, 54, 112, 0.07);
+  --latar-kartu-mini: rgba(255, 255, 255, 0.72);
+  --gradient-judul: linear-gradient(90deg, #061225, #0b4c93, #f3c72f, #0a2f65, #061225);
+  --gradient-tombol-utama: linear-gradient(135deg, #0a376d, #0b4c93 62%, #f3c72f 100%);
+  --warna-tombol-utama: #ffffff;
+  --bayangan-utama: 0 18px 48px rgba(11, 44, 89, 0.12);
+  --bayangan-ungu: 0 0 0 1px rgba(10, 54, 112, 0.08), 0 18px 42px rgba(11, 44, 89, 0.14);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  border: none;
+  outline: none;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+.lapisan-latar {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black 58%, transparent 95%);
+}
+
+.tersembunyi {
+  display: none !important;
+}
+
+.judul-logo,
+.judul-halaman,
+.judul-panel-besar {
+  font-family: var(--font-judul);
+  letter-spacing: 0.04em;
+  background: var(--gradient-judul);
+  background-size: 260% 260%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: alur-warna-judul 9s ease infinite;
+}
+
+.judul-logo {
+  font-size: clamp(3.8rem, 8vw, 6.8rem);
+  line-height: 1.05;
+}
+
+.judul-halaman {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.15;
+}
+
+.judul-panel-besar {
+  font-size: 1.2rem;
+}
+
+@keyframes alur-warna-judul {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes kedip-kursor {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.label-mikro,
+.label-kartu {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--warna-biru);
+}
+
+.teks-pendamping,
+.teks-tipis {
+  color: var(--warna-teks-lembut);
+  line-height: 1.65;
+}
+
+.kartu-kaca {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-besar);
+  border: 1px solid var(--warna-garis);
+  background: var(--latar-panel);
+  box-shadow: var(--bayangan-utama);
+  backdrop-filter: blur(18px);
+}
+
+.kartu-kaca::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 44%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(66, 199, 255, 0.8), transparent);
+  opacity: 0.9;
+}
+
+.tombol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: var(--transisi-halus);
+}
+
+.tombol:hover {
+  transform: translateY(-1px);
+}
+
+.tombol-utama {
+  color: var(--warna-tombol-utama);
+  background: var(--gradient-tombol-utama);
+  box-shadow: 0 12px 32px rgba(66, 199, 255, 0.22);
+}
+
+.tombol-garis {
+  border: 1px solid rgba(124, 108, 255, 0.24);
+  background: var(--latar-chip);
+  color: var(--warna-putih);
+}
+
+.tombol-bahaya {
+  border: 1px solid rgba(255, 107, 145, 0.25);
+  background: rgba(255, 107, 145, 0.1);
+  color: #ffd7e2;
+}
+
+.tombol-penuh {
+  width: 100%;
+}
+
+.tombol-besar {
+  min-width: 280px;
+  min-height: 56px;
+  font-size: 1.02rem;
+}
+
+.tombol-kecil {
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 0.84rem;
+}
+
+.tombol-mini {
+  min-height: 34px;
+  padding: 0 14px;
+  font-size: 0.78rem;
+}
+
+.input-glow {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 18px;
+  border-radius: var(--radius-kecil);
+  border: 1px solid rgba(124, 108, 255, 0.18);
+  background: var(--latar-input);
+  transition: var(--transisi-halus);
+}
+
+.input-glow:focus {
+  border-color: rgba(66, 199, 255, 0.72);
+  box-shadow: 0 0 0 4px rgba(66, 199, 255, 0.12);
+}
+
+.label-input {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--warna-putih);
+}
+
+.form-vertikal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.baris-tombol-form {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.baris-pengingat-login {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pilihan-centang {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--warna-teks);
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.pilihan-centang input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--warna-biru);
+}
+
+.tombol-lupakan-akun {
+  color: var(--warna-biru);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.bungkus-password {
+  position: relative;
+}
+
+.input-password {
+  padding-right: 88px;
+}
+
+.tombol-lihat-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  min-width: 58px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 108, 255, 0.2);
+  background: var(--latar-chip);
+  color: var(--warna-biru);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.halaman-landing {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+}
+
+.hero-index {
+  width: min(860px, 100%);
+  padding: 72px 54px;
+  text-align: center;
+}
+
+.bingkai-ketik {
+  min-height: 76px;
+  margin: 24px auto 34px;
+  display: grid;
+  place-items: center;
+  padding: 0 24px;
+}
+
+.teks-ketik {
+  font-size: clamp(1.1rem, 2.2vw, 1.42rem);
+  color: var(--warna-putih);
+  line-height: 1.6;
+}
+
+.teks-ketik::after {
+  content: "|";
+  margin-left: 8px;
+  color: var(--warna-biru);
+  animation: kedip-kursor 0.9s steps(2, start) infinite;
+}
+
+.halaman-autentikasi {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+}
+
+#tampilanAplikasi {
+  min-height: 100vh;
+}
+
+body.mode-aplikasi #tampilanAplikasi {
+  height: 100vh;
+}
+
+.kontainer-autentikasi {
+  width: min(560px, 100%);
+}
+
+.panel-autentikasi {
+  padding: 32px;
+}
+
+.kepala-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tautan-kembali {
+  display: inline-flex;
+  margin-top: 18px;
+  color: var(--warna-biru);
+}
+
+.kontainer-tab {
+  padding: 24px;
+}
+
+.tanpa-padding {
+  padding: 0;
+}
+
+.daftar-tab {
+  display: inline-flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 108, 255, 0.18);
+  background: var(--latar-chip);
+  flex-wrap: wrap;
+}
+
+.tombol-tab {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  color: var(--warna-teks-lembut);
+  font-weight: 700;
+  transition: var(--transisi-halus);
+}
+
+.tombol-tab.aktif {
+  color: #05070f;
+  background: linear-gradient(135deg, #ffffff, #87d6ff 45%, #b7b0ff 100%);
+}
+
+.panel-tab {
+  display: none;
+}
+
+.panel-tab.aktif {
+  display: block;
+}
+
+.tata-letak-aplikasi {
+  display: grid;
+  grid-template-columns: var(--lebar-sidebar) 1fr;
+  gap: 24px;
+  padding: 24px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  align-items: stretch;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  min-height: 0;
+  height: 100%;
+  padding: 20px;
+  border-radius: 30px;
+  border: 1px solid var(--warna-garis);
+  background: var(--latar-sidebar);
+  box-shadow: var(--bayangan-ungu);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.kepala-sidebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.merek-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-merek {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--warna-biru) 20%, transparent), color-mix(in srgb, var(--warna-kuning, var(--warna-ungu)) 20%, transparent));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--font-judul);
+  font-size: 1.1rem;
+  color: var(--warna-putih);
+}
+
+.teks-merek {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.teks-merek strong {
+  font-size: 1.08rem;
+}
+
+.teks-merek small {
+  color: var(--warna-teks-lembut);
+}
+
+.tombol-ciut-sidebar {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(124, 108, 255, 0.2);
+  background: var(--latar-chip);
+}
+
+.menu-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-menu-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 54px;
+  padding: 0 16px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  color: var(--warna-teks);
+  transition: var(--transisi-halus);
+}
+
+.item-menu-sidebar:hover {
+  background: var(--latar-chip);
+  border-color: rgba(124, 108, 255, 0.18);
+}
+
+.item-menu-sidebar.aktif {
+  background: linear-gradient(135deg, rgba(124, 108, 255, 0.16), rgba(66, 199, 255, 0.14));
+  border-color: rgba(66, 199, 255, 0.28);
+}
+
+.ikon-menu {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--latar-chip);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.informasi-sidebar {
+  margin-top: 22px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(66, 199, 255, 0.14);
+  background: var(--latar-kartu-mini);
+}
+
+.panel-tema-sidebar {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(66, 199, 255, 0.14);
+  background: var(--latar-kartu-mini);
+}
+
+.tombol-tema-sidebar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--warna-garis);
+  background: var(--latar-chip);
+  color: var(--warna-putih);
+  font-weight: 800;
+}
+
+.aksi-sidebar {
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.konten-aplikasi {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.area-scroll-aplikasi {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding-right: 8px;
+  overscroll-behavior: contain;
+  outline: none;
+}
+
+.halaman-aplikasi {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 100%;
+  padding-bottom: 8px;
+}
+
+.kepala-aplikasi {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  backdrop-filter: blur(20px);
+}
+
+.grup-chip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.chip-info,
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 108, 255, 0.2);
+  background: var(--latar-chip);
+  color: var(--warna-teks);
+}
+
+.grid-ringkasan-dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.kartu-ringkas {
+  padding: 22px;
+}
+
+.angka-statistik {
+  display: block;
+  margin: 12px 0 8px;
+  font-size: clamp(1.9rem, 2.7vw, 2.8rem);
+  font-weight: 800;
+  color: var(--warna-putih);
+}
+
+.panel-dashboard-besar,
+.panel-kelas,
+.panel-semester,
+.panel-hasil-kiri,
+.panel-hasil-kanan {
+  padding: 28px;
+}
+
+.panel-dashboard-besar {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.judul-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.judul-panel-dengan-aksi {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.kontrol-pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.daftar-kelas-dashboard,
+.daftar-kelas-manajemen,
+.daftar-semester-tersimpan,
+.daftar-akordeon-semester,
+.daftar-mata-kuliah-form {
+  display: grid;
+  gap: 14px;
+}
+
+#halamanDashboard .daftar-kelas-dashboard {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+  align-content: start;
+  overscroll-behavior: contain;
+}
+
+.item-kelas-dashboard,
+.kartu-kelas-manajemen,
+.kartu-semester,
+.kartu-identitas-hasil,
+.kartu-ringkasan-hasil,
+.item-akordeon,
+.kotak-info-pilihan,
+.keadaan-kosong {
+  border-radius: 20px;
+  border: 1px solid rgba(124, 108, 255, 0.18);
+  background: var(--latar-kartu-mini);
+}
+
+.item-kelas-dashboard,
+.kartu-kelas-manajemen,
+.kartu-semester,
+.kartu-identitas-hasil,
+.kartu-ringkasan-hasil,
+.kotak-info-pilihan,
+.keadaan-kosong {
+  padding: 20px;
+}
+
+.kepala-item-kelas,
+.kepala-kelas-manajemen,
+.baris-mahasiswa,
+.ringkasan-semester,
+.baris-tombol-kecil,
+.baris-kepala-matkul,
+.kepala-akordeon-semester {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.grup-tambah-jam {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.daftar-mahasiswa-kelas {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.baris-mahasiswa {
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(124, 108, 255, 0.14);
+  background: var(--latar-kartu-mini);
+}
+
+.grid-kelas,
+.grid-semester-baru,
+.grid-hasil {
+  display: grid;
+  gap: 18px;
+}
+
+.grid-kelas {
+  grid-template-columns: 0.92fr 1.08fr;
+}
+
+.grid-semester-baru {
+  grid-template-columns: 0.95fr 1.05fr;
+}
+
+.grid-hasil {
+  grid-template-columns: 0.82fr 1.18fr;
+}
+
+.pemisah-panel {
+  height: 1px;
+  margin: 26px 0;
+  background: linear-gradient(90deg, rgba(66, 199, 255, 0.4), rgba(124, 108, 255, 0.12), transparent);
+}
+
+.baris-mata-kuliah {
+  display: grid;
+  grid-template-columns: 2.1fr 0.7fr 0.7fr auto;
+  gap: 10px;
+}
+
+.judul-kartu-semester {
+  margin: 8px 0 6px;
+  font-size: 1.3rem;
+}
+
+.tabel-semester-mini,
+.tabel-detail-semester {
+  margin-top: 18px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(124, 108, 255, 0.16);
+}
+
+.baris-header-mini,
+.baris-data-mini {
+  display: grid;
+  grid-template-columns: 2fr 0.6fr 0.6fr 0.8fr;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 16px;
+}
+
+.baris-tabel-detail {
+  display: grid;
+  grid-template-columns: 2fr 0.6fr 0.6fr;
+  gap: 10px;
+  padding: 14px 16px;
+}
+
+.baris-header-mini,
+.baris-tabel-detail.kepala {
+  background: var(--latar-chip);
+  color: var(--warna-teks-lembut);
+  font-size: 0.88rem;
+}
+
+.baris-data-mini,
+.baris-tabel-detail:not(.kepala) {
+  border-top: 1px solid rgba(124, 108, 255, 0.12);
+}
+
+.tombol-link-kecil {
+  color: #ffd1dc;
+  text-align: left;
+}
+
+.grid-identitas-hasil,
+.grid-statistik-hasil {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.kartu-identitas-hasil .angka-ringkasan-hasil {
+  font-size: 1.18rem;
+  line-height: 1.5;
+}
+
+.angka-ringkasan-hasil {
+  display: block;
+  margin-top: 12px;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.catatan-ringkasan-hasil {
+  margin-top: 14px;
+  color: var(--warna-teks-lembut);
+}
+
+.tombol-akordeon {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+}
+
+.isi-akordeon {
+  display: none;
+  padding: 0 20px 20px;
+}
+
+.isi-akordeon.aktif {
+  display: block;
+}
+
+.bungkus-grafik {
+  min-height: 420px;
+  padding: 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(124, 108, 255, 0.18);
+  background: var(--latar-kartu-mini);
+}
+
+.kontainer-notifikasi {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notifikasi {
+  min-width: 280px;
+  max-width: 360px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--warna-panel-pekat);
+  box-shadow: var(--bayangan-utama);
+  color: var(--warna-putih);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.notifikasi.sukses {
+  border-color: rgba(66, 199, 255, 0.3);
+}
+
+.notifikasi.peringatan,
+.notifikasi.gagal {
+  border-color: rgba(255, 107, 145, 0.34);
+}
+
+body.tema-terang .tombol-tab.aktif {
+  color: #ffffff;
+  background: linear-gradient(135deg, #0a376d, #0b4c93 64%, #f3c72f 100%);
+}
+
+body.tema-terang .tombol-bahaya {
+  color: #8b173b;
+  border-color: rgba(181, 31, 75, 0.24);
+  background: rgba(181, 31, 75, 0.08);
+}
+
+body.tema-terang .tombol-link-kecil {
+  color: #b51f4b;
+}
+
+body.tema-terang .baris-data-mini,
+body.tema-terang .baris-tabel-detail:not(.kepala) {
+  border-top-color: rgba(10, 54, 112, 0.10);
+}
+
+.sidebar-ciut .teks-merek,
+.sidebar-ciut .teks-menu-sidebar,
+.sidebar-ciut .informasi-sidebar,
+.sidebar-ciut .panel-tema-sidebar,
+.sidebar-ciut .teks-logout-sidebar {
+  display: none;
+}
+
+.sidebar-ciut .kepala-sidebar {
+  flex-direction: column;
+}
+
+.sidebar-ciut .item-menu-sidebar {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebar-ciut .aksi-sidebar .tombol {
+  width: 100%;
+  padding: 0;
+}
+
+.sidebar::-webkit-scrollbar,
+.area-scroll-aplikasi::-webkit-scrollbar,
+#halamanDashboard .daftar-kelas-dashboard::-webkit-scrollbar {
+  width: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.area-scroll-aplikasi::-webkit-scrollbar-thumb,
+#halamanDashboard .daftar-kelas-dashboard::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(66, 199, 255, 0.55), rgba(124, 108, 255, 0.5));
+}
+
+.sidebar::-webkit-scrollbar-track,
+.area-scroll-aplikasi::-webkit-scrollbar-track,
+#halamanDashboard .daftar-kelas-dashboard::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 999px;
+}
+
+@media (max-width: 1320px) {
+  .grid-kelas,
+  .grid-semester-baru,
+  .grid-hasil {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  body.mode-aplikasi {
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body.mode-aplikasi #tampilanAplikasi {
+    height: auto;
+  }
+
+  .tata-letak-aplikasi {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .sidebar {
+    position: relative;
+    min-height: auto;
+    height: auto;
+    overflow: visible;
+  }
+
+  .konten-aplikasi,
+  .area-scroll-aplikasi,
+  .halaman-aplikasi {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .kepala-aplikasi {
+    position: relative;
+    top: auto;
+  }
+
+  .kepala-aplikasi,
+  .judul-panel-dengan-aksi {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .grid-ringkasan-dashboard,
+  .grid-identitas-hasil,
+  .grid-statistik-hasil,
+  .baris-mata-kuliah {
+    grid-template-columns: 1fr;
+  }
+}
+
