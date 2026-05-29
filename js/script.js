@@ -459,7 +459,7 @@
   function renderSidebar(halamanAktif) {
     const username = ambilSesiAktif();
     const temaAktif = ambilTemaTersimpan();
-    const labelTema = temaAktif === "gelap" ? "Mode Terang" : "Mode Gelap";
+    const labelTema = temaAktif === "gelap" ? "Terang" : "Gelap";
 
     elemen.sidebarAplikasi.innerHTML = [
       "<div class='kepala-sidebar'>",
@@ -614,7 +614,7 @@
     ].join("");
 
     if (!daftarTampil.length) {
-      elemen.daftarCountdownKelasDashboard.innerHTML = "<div class='keadaan-kosong'>Belum ada kelas aktif. Buat kelas baru dari menu Manajemen Kelas.</div>";
+      elemen.daftarCountdownKelasDashboard.innerHTML = "<div class='keadaan-kosong'>Buat kelas baru dari menu Manajemen Kelas.</div>";
     } else {
       elemen.daftarCountdownKelasDashboard.innerHTML = daftarTampil.map(function (kelas) {
         return buatKartuCountdownKelas(kelas, "dashboard");

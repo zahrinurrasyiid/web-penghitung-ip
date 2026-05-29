@@ -20,7 +20,7 @@
       <div class="bingkai-ketik">
         <p id="teksKetikanIndex" class="teks-ketik"></p>
       </div>
-      <button id="tombolMasukAutentikasi" class="tombol tombol-utama tombol-besar">Masuk ke Autentikasi</button>
+      <button id="tombolMasukAutentikasi" class="tombol tombol-utama tombol-besar">Masuk</button>
     </section>
   </section>
 
@@ -29,7 +29,6 @@
       <section class="panel-autentikasi kartu-kaca">
         <div class="kepala-panel">
           <h1 class="judul-halaman" data-judul-animasi>IPgrade</h1>
-          <p class="teks-pendamping">Login atau register untuk mulai mengelola kelas, mahasiswa, dan semester.</p>
         </div>
 
         <div id="kontainerTabAutentikasi" class="kontainer-tab">
@@ -75,10 +74,10 @@
                   <input id="ingatAkunLogin" type="checkbox">
                   <span>Ingat akun saya</span>
                 </label>
-                <button id="tombolLupakanAkun" type="button" class="tombol-lupakan-akun tersembunyi">Lupakan akun tersimpan</button>
+                <button id="tombolLupakanAkun" type="button" class="tombol-lupakan-akun tersembunyi">Lupakan akun</button>
               </div>
 
-              <button type="submit" class="tombol tombol-utama tombol-penuh">Masuk ke Aplikasi</button>
+              <button type="submit" class="tombol tombol-utama tombol-penuh">Login</button>
             </form>
           </section>
         </div>
@@ -97,12 +96,10 @@
           <section id="halamanDashboard" data-halaman-aplikasi="dashboard" class="halaman-aplikasi">
             <header class="kepala-aplikasi kartu-kaca">
               <div>
-                <span class="label-mikro">Ringkasan Utama</span>
                 <h1 class="judul-halaman" data-judul-animasi>Dashboard</h1>
-                <p class="teks-pendamping">Pantau jumlah kelas, jumlah mahasiswa, dan countdown kelas yang sedang aktif.</p>
               </div>
               <div class="grup-chip">
-                <span class="chip-info">Pengguna aktif: <strong id="namaPenggunaDashboard">-</strong></span>
+                <span class="chip-info">Nama Pengguna: <strong id="namaPenggunaDashboard">-</strong></span>
               </div>
             </header>
 
@@ -110,19 +107,16 @@
               <article class="kartu-kaca kartu-ringkas">
                 <span class="label-kartu">Jumlah Kelas</span>
                 <strong id="jumlahKelasDashboard" class="angka-statistik">0</strong>
-                <small class="teks-tipis">Total kelas yang masih aktif.</small>
               </article>
               <article class="kartu-kaca kartu-ringkas">
                 <span class="label-kartu">Jumlah Mahasiswa</span>
                 <strong id="jumlahMahasiswaDashboard" class="angka-statistik">0</strong>
-                <small class="teks-tipis">Akumulasi seluruh mahasiswa dari semua kelas.</small>
               </article>
             </section>
 
             <section class="kartu-kaca panel-dashboard-besar">
               <div class="judul-panel judul-panel-dengan-aksi">
                 <div>
-                  <span class="label-mikro">Countdown Kelas</span>
                   <h2 class="judul-panel-besar">Daftar Kedaluwarsa Kelas</h2>
                 </div>
                 <div id="kontrolPaginationDashboard" class="kontrol-pagination"></div>
