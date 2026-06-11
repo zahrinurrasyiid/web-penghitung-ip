@@ -10,9 +10,12 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="tema-gelap">
+<body class="tema-gelap" data-theme="dark">
   <div class="lapisan-latar"></div>
   <div id="kontainerNotifikasi" class="kontainer-notifikasi"></div>
+  <button id="tombolTemaGlobal" type="button" class="tombol-mode-tema" aria-label="Ganti tema" aria-pressed="true">
+    <span id="labelTemaGlobal">Mode Terang</span>
+  </button>
 
   <section id="tampilanLanding" class="halaman-landing">
     <section class="hero-index kartu-kaca">
@@ -311,4 +314,3 @@
   <script src="../js/script.js"></script>
 </body>
 </html>
-

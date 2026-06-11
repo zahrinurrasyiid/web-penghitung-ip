@@ -1,4 +1,4 @@
-﻿const AplikasiIPgrade = (function () {
+const AplikasiIPgrade = (function () {
   const KUNCI_AKUN = "ipgrade_akun";
   const KUNCI_SESI = "ipgrade_sesi";
   const KUNCI_KELAS = "ipgrade_kelas";
@@ -24,6 +24,8 @@
     sidebarAplikasi: document.getElementById("sidebarAplikasi"),
     areaScrollAplikasi: document.getElementById("areaScrollAplikasi"),
     kontainerNotifikasi: document.getElementById("kontainerNotifikasi"),
+    tombolTemaGlobal: document.getElementById("tombolTemaGlobal"),
+    labelTemaGlobal: document.getElementById("labelTemaGlobal"),
     teksKetikanIndex: document.getElementById("teksKetikanIndex"),
     loginUsername: document.getElementById("loginUsername"),
     ingatAkunLogin: document.getElementById("ingatAkunLogin"),
@@ -39,7 +41,8 @@
     halamanAktif: "landing",
     halamanCountdownDashboard: 1,
     grafikAktif: null,
-    intervalCountdown: null
+    intervalCountdown: null,
+    notifikasiTemaSudahDitampilkan: false
   };
 
   function amankanHtml(teks) {
@@ -153,13 +156,39 @@
 
   function terapkanTema(tema) {
     const temaAktif = tema === "terang" ? "terang" : "gelap";
+    const dataTema = temaAktif === "terang" ? "light" : "dark";
     document.body.classList.toggle("tema-terang", temaAktif === "terang");
     document.body.classList.toggle("tema-gelap", temaAktif === "gelap");
+    document.body.dataset.theme = dataTema;
+    document.documentElement.dataset.theme = dataTema;
     localStorage.setItem(KUNCI_TEMA, temaAktif);
+
+    if (elemen.labelTemaGlobal) {
+      elemen.labelTemaGlobal.textContent = temaAktif === "gelap" ? "Mode Terang" : "Mode Gelap";
+    }
+
+    if (elemen.tombolTemaGlobal) {
+      elemen.tombolTemaGlobal.setAttribute("aria-label", temaAktif === "gelap" ? "Ganti ke mode terang" : "Ganti ke mode gelap");
+      elemen.tombolTemaGlobal.setAttribute("aria-pressed", temaAktif === "gelap" ? "true" : "false");
+    }
   }
 
-  function ubahTema() {
-    const temaBaru = ambilTemaTersimpan() === "gelap" ? "terang" : "gelap";
+  function ambilTitikTransisiTema(event) {
+    if (event && event.currentTarget) {
+      const kotakTombol = event.currentTarget.getBoundingClientRect();
+      return {
+        x: kotakTombol.left + kotakTombol.width / 2,
+        y: kotakTombol.top + kotakTombol.height / 2
+      };
+    }
+
+    return {
+      x: window.innerWidth - 36,
+      y: 36
+    };
+  }
+
+  function perbaruiTemaAktif(temaBaru) {
     terapkanTema(temaBaru);
     renderSidebar(keadaan.halamanAktif);
 
@@ -168,16 +197,49 @@
     }
   }
 
+  function ubahTema(event) {
+    const temaBaru = ambilTemaTersimpan() === "gelap" ? "terang" : "gelap";
+    const titikTransisi = ambilTitikTransisiTema(event);
+    const kurangiGerak = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    document.documentElement.style.setProperty("--tema-x", titikTransisi.x + "px");
+    document.documentElement.style.setProperty("--tema-y", titikTransisi.y + "px");
+
+    if (!document.startViewTransition || kurangiGerak) {
+      perbaruiTemaAktif(temaBaru);
+      return;
+    }
+
+    document.documentElement.classList.add("transisi-tema-wave");
+
+    const transisiTema = document.startViewTransition(function () {
+      perbaruiTemaAktif(temaBaru);
+    });
+
+    transisiTema.finished.finally(function () {
+      document.documentElement.classList.remove("transisi-tema-wave");
+    });
+  }
+
+  function tampilkanNotifikasiTemaSekali() {
+    if (keadaan.notifikasiTemaSudahDitampilkan) {
+      return;
+    }
+
+    keadaan.notifikasiTemaSudahDitampilkan = true;
+    tampilkanNotifikasi("Tema berhasil diganti ke " + (ambilTemaTersimpan() === "terang" ? "mode terang." : "mode gelap."), "sukses");
+  }
+
   function ambilWarnaGrafik() {
     const modeTerang = ambilTemaTersimpan() === "terang";
     return {
-      areaAwal: modeTerang ? "rgba(11, 76, 147, 0.24)" : "rgba(66, 199, 255, 0.42)",
-      areaAkhir: modeTerang ? "rgba(243, 199, 47, 0.10)" : "rgba(124, 108, 255, 0.06)",
-      garis: modeTerang ? "#0b4c93" : "#42c7ff",
-      titik: modeTerang ? "#f3c72f" : "#ffffff",
-      batasTitik: modeTerang ? "#0a376d" : "#7c6cff",
-      teks: modeTerang ? "rgba(8, 20, 39, 0.78)" : "rgba(239, 241, 255, 0.78)",
-      grid: modeTerang ? "rgba(10, 54, 112, 0.14)" : "rgba(124, 108, 255, 0.12)"
+      areaAwal: modeTerang ? "rgba(34, 211, 238, 0.28)" : "rgba(167, 139, 250, 0.28)",
+      areaAkhir: modeTerang ? "rgba(255, 183, 3, 0.16)" : "rgba(34, 211, 238, 0.10)",
+      garis: modeTerang ? "#7c3aed" : "#a78bfa",
+      titik: modeTerang ? "#ffb703" : "#facc15",
+      batasTitik: modeTerang ? "#111111" : "#f8fafc",
+      teks: modeTerang ? "#111111" : "#f8fafc",
+      grid: modeTerang ? "rgba(17, 17, 17, 0.18)" : "rgba(248, 250, 252, 0.18)"
     };
   }
 
@@ -459,7 +521,7 @@
   function renderSidebar(halamanAktif) {
     const username = ambilSesiAktif();
     const temaAktif = ambilTemaTersimpan();
-    const labelTema = temaAktif === "gelap" ? "Terang" : "Gelap";
+    const labelTema = temaAktif === "gelap" ? "Mode Terang" : "Mode Gelap";
 
     elemen.sidebarAplikasi.innerHTML = [
       "<div class='kepala-sidebar'>",
@@ -478,10 +540,6 @@
         buatMenuSidebar("semester", "Data Semester", halamanAktif),
         buatMenuSidebar("hasil", "Hasil", halamanAktif),
       "</nav>",
-      "<div class='informasi-sidebar'>",
-        "<span class='label-kartu'>Status Data</span>",
-        "<p class='teks-pendamping'>Semua semester berada di dalam mahasiswa kelas. Countdown berlaku per kelas.</p>",
-      "</div>",
       "<div class='panel-tema-sidebar'>",
         "<span class='label-kartu'>Tema</span>",
         "<button type='button' id='tombolTemaSidebar' class='tombol-tema-sidebar'>" + labelTema + "</button>",
@@ -500,9 +558,9 @@
       localStorage.setItem(KUNCI_SIDEBAR_CIUT, sedangCiut ? "ya" : "tidak");
     });
 
-    document.getElementById("tombolTemaSidebar").addEventListener("click", function () {
-      ubahTema();
-      tampilkanNotifikasi("Tema berhasil diganti ke " + (ambilTemaTersimpan() === "terang" ? "mode terang." : "mode gelap."), "sukses");
+    document.getElementById("tombolTemaSidebar").addEventListener("click", function (event) {
+      ubahTema(event);
+      tampilkanNotifikasiTemaSekali();
     });
 
     document.getElementById("tombolLogoutSidebar").addEventListener("click", function () {
@@ -1216,6 +1274,13 @@
     inisialisasiTab(document.getElementById("kontainerTabAutentikasi"));
     inisialisasiTab(document.getElementById("kontainerTabHasil"));
 
+    if (elemen.tombolTemaGlobal) {
+      elemen.tombolTemaGlobal.addEventListener("click", function (event) {
+        ubahTema(event);
+        tampilkanNotifikasiTemaSekali();
+      });
+    }
+
     document.getElementById("tombolMasukAutentikasi").addEventListener("click", function () {
       tampilkanTampilan("autentikasi");
     });
@@ -1808,5 +1873,3 @@
 })();
 
 AplikasiIPgrade.mulaiAplikasi();
-
-
