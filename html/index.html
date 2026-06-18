@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -13,8 +13,13 @@
 <body class="tema-gelap" data-theme="dark">
   <div class="lapisan-latar"></div>
   <div id="kontainerNotifikasi" class="kontainer-notifikasi"></div>
-  <button id="tombolTemaGlobal" type="button" class="tombol-mode-tema" aria-label="Ganti tema" aria-pressed="true">
-    <span id="labelTemaGlobal">Mode Terang</span>
+  <button id="tombolTemaGlobal" type="button" class="tombol-mode-tema" aria-label="Tema aktif mode gelap. Ganti ke mode terang" aria-pressed="true">
+    <span id="labelTemaGlobal" aria-hidden="true"><svg class="ikon-svg ikon-tema" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M47 7 C38 10 31 19 31 30 C31 43 41 53 55 54 C49 60 40 62 31 59 C18 55 9 43 11 29 C13 15 26 5 40 6 C43 6 45 7 47 7 Z" fill="var(--icon-primary, #60A5FA)"/>
+    <path d="M43 18 C38 25 38 34 44 42 C39 40 35 35 35 29 C35 24 38 20 43 18 Z" fill="var(--icon-surface, #FFFFFF)" stroke="none"/>
+  </g>
+</svg></span>
   </button>
 
   <section id="tampilanLanding" class="halaman-landing">
@@ -34,58 +39,88 @@
           <h1 class="judul-halaman" data-judul-animasi>IPgrade</h1>
         </div>
 
-        <div id="kontainerTabAutentikasi" class="kontainer-tab">
-          <div class="daftar-tab">
-            <button type="button" class="tombol-tab aktif" data-target-tab="register">Register</button>
-            <button type="button" class="tombol-tab" data-target-tab="login">Login</button>
-          </div>
-
-          <section class="panel-tab aktif" data-panel-tab="register">
-            <form id="formRegister" class="form-vertikal">
-              <label class="label-input" for="registerUsername">Username</label>
-              <input id="registerUsername" type="text" class="input-glow" placeholder="Minimal 4 karakter">
-
-              <label class="label-input" for="registerPassword">Password</label>
-              <div class="bungkus-password">
-                <input id="registerPassword" type="password" class="input-glow input-password" placeholder="Masukkan password">
-                <button type="button" class="tombol-lihat-password" data-target-password="registerPassword" aria-label="Lihat password">Lihat</button>
-              </div>
-
-              <label class="label-input" for="registerVerifikasi">Verifikasi Password</label>
-              <div class="bungkus-password">
-                <input id="registerVerifikasi" type="password" class="input-glow input-password" placeholder="Ulangi password">
-                <button type="button" class="tombol-lihat-password" data-target-password="registerVerifikasi" aria-label="Lihat verifikasi password">Lihat</button>
-              </div>
-
-              <button type="submit" class="tombol tombol-utama tombol-penuh">Daftarkan Akun</button>
-            </form>
+        <div id="kontainerAutentikasiAkun" class="alur-auth">
+          <section id="pilihanLoginAwal" class="panel-auth-langkah">
+            <div class="daftar-opsi-login">
+              <button id="tombolLoginGoogle" type="button" class="tombol tombol-penuh tombol-sosial tombol-google">Login dengan Google</button>
+              <button id="tombolLoginFacebook" type="button" class="tombol tombol-penuh tombol-sosial tombol-facebook">Login dengan Facebook</button>
+              <button id="tombolMasukEmail" type="button" class="tombol tombol-utama tombol-penuh">Masukkan Email</button>
+            </div>
           </section>
 
-          <section class="panel-tab" data-panel-tab="login">
-            <form id="formLogin" class="form-vertikal">
-              <label class="label-input" for="loginUsername">Username</label>
-              <input id="loginUsername" type="text" class="input-glow" placeholder="Masukkan username">
+          <form id="formEmailLogin" class="form-vertikal panel-auth-langkah tersembunyi">
+            <label class="label-input" for="inputEmailLogin">Email</label>
+            <input id="inputEmailLogin" type="email" class="input-glow" placeholder="nama@email.com" autocomplete="email">
+            <button type="submit" class="tombol tombol-utama tombol-penuh">Lanjut</button>
+            <button type="button" class="tautan-kembali tombol-kembali-auth" data-auth-kembali>Pilih Cara Lain</button>
+          </form>
 
-              <label class="label-input" for="loginPassword">Password</label>
-              <div class="bungkus-password">
-                <input id="loginPassword" type="password" class="input-glow input-password" placeholder="Masukkan password">
-                <button type="button" class="tombol-lihat-password" data-target-password="loginPassword" aria-label="Lihat password login">Lihat</button>
-              </div>
+          <form id="formLogin" class="form-vertikal panel-auth-langkah tersembunyi">
+            <div class="ringkasan-email-auth">
+              <span>Email</span>
+              <strong id="teksEmailLoginAktif">-</strong>
+              <button id="tombolUbahEmailLogin" type="button" class="tombol-link-kecil">Ubah</button>
+            </div>
 
-              <div class="baris-pengingat-login">
-                <label class="pilihan-centang" for="ingatAkunLogin">
-                  <input id="ingatAkunLogin" type="checkbox">
-                  <span>Ingat akun saya</span>
-                </label>
-                <button id="tombolLupakanAkun" type="button" class="tombol-lupakan-akun tersembunyi">Lupakan akun</button>
-              </div>
+            <label class="label-input" for="loginPassword">Password</label>
+            <div class="bungkus-password">
+              <input id="loginPassword" type="password" class="input-glow input-password" placeholder="Masukkan password" autocomplete="current-password">
+              <button type="button" class="tombol-lihat-password" data-target-password="loginPassword" aria-label="Lihat password login">Lihat</button>
+            </div>
 
-              <button type="submit" class="tombol tombol-utama tombol-penuh">Login</button>
-            </form>
-          </section>
+            <p id="teksAkunBelumAda" class="teks-kecil-auth tersembunyi"><span>Belum punya akun? </span><button id="tombolBukaRegister" type="button">Daftar</button></p>
+            <button type="submit" class="tombol tombol-utama tombol-penuh">Login</button>
+          </form>
+
+          <form id="formRegister" class="form-vertikal panel-auth-langkah tersembunyi">
+            <label class="label-input" for="registerEmail">Email</label>
+            <input id="registerEmail" type="email" class="input-glow" placeholder="nama@email.com" autocomplete="email">
+
+            <label class="label-input" for="registerPassword">Password</label>
+            <div class="bungkus-password">
+              <input id="registerPassword" type="password" class="input-glow input-password" placeholder="Buat password" autocomplete="new-password">
+              <button type="button" class="tombol-lihat-password" data-target-password="registerPassword" aria-label="Lihat password">Lihat</button>
+            </div>
+
+            <label class="label-input" for="registerVerifikasi">Konfirmasi Password</label>
+            <div class="bungkus-password">
+              <input id="registerVerifikasi" type="password" class="input-glow input-password" placeholder="Ulangi password" autocomplete="new-password">
+              <button type="button" class="tombol-lihat-password" data-target-password="registerVerifikasi" aria-label="Lihat konfirmasi password">Lihat</button>
+            </div>
+
+            <button type="submit" class="tombol tombol-utama tombol-penuh">Daftar dan Masuk</button>
+            <button type="button" class="tautan-kembali tombol-kembali-auth" data-auth-kembali>Pilih Cara Lain</button>
+          </form>
         </div>
 
         <button id="tombolKembaliLanding" class="tautan-kembali">Kembali ke Halaman Awal</button>
+      </section>
+    </main>
+  </section>
+
+  <section id="tampilanProfil" class="halaman-autentikasi tersembunyi">
+    <main class="kontainer-autentikasi">
+      <section class="panel-autentikasi kartu-kaca">
+        <div class="kepala-panel">
+          <span class="label-mikro">Profil Pengguna</span>
+          <h1 class="judul-halaman" data-judul-animasi>Lengkapi Profil</h1>
+          <p class="teks-pendamping">Data ini dipakai untuk dashboard dan tetap tersimpan di perangkat ini.</p>
+        </div>
+
+        <form id="formProfil" class="form-vertikal">
+          <label class="label-input" for="inputNamaProfil">Nama</label>
+          <input id="inputNamaProfil" type="text" class="input-glow" placeholder="Nama lengkap" autocomplete="name">
+
+          <label class="label-input" for="inputNimProfil">NIM <span class="teks-opsional">(opsional)</span></label>
+          <input id="inputNimProfil" type="text" class="input-glow" placeholder="NIM">
+
+          <label class="label-input" for="inputKelasProfil">Kelas <span class="teks-opsional">(opsional)</span></label>
+          <input id="inputKelasProfil" type="text" class="input-glow" placeholder="Contoh: TI 2024 A">
+
+          <button type="submit" class="tombol tombol-utama tombol-penuh">Simpan Profil</button>
+        </form>
+
+        <button id="tombolLogoutProfil" type="button" class="tautan-kembali">Logout</button>
       </section>
     </main>
   </section>

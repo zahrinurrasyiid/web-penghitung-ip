@@ -2,24 +2,24 @@ const AplikasiIPgrade = (function () {
   const KUNCI_AKUN = "ipgrade_akun";
   const KUNCI_SESI = "ipgrade_sesi";
   const KUNCI_KELAS = "ipgrade_kelas";
+  const KUNCI_PROFIL = "ipgrade_profil";
   const KUNCI_SIDEBAR_CIUT = "ipgrade_sidebar_ciut";
   const KUNCI_TEMA = "ipgrade_tema";
-  const KUNCI_USERNAME_DIINGAT = "ipgrade_username_diingat";
-  const DURASI_ENAM_JAM = 6 * 60 * 60 * 1000;
+  const DURASI_SATU_HARI = 24 * 60 * 60 * 1000;
   const BATAS_KELAS_DASHBOARD = 5;
   const BATAS_MAHASISWA_PER_KELAS = 50;
   const BATAS_SEMESTER = 14;
   const BATAS_MATA_KULIAH = 9;
   const PETA_BOBOT_NILAI = { A: 4, B: 3, C: 2, D: 1, E: 0 };
-  const PILIHAN_TAMBAH_JAM = [
-    { label: "Tambah 30 Menit", nilai: 30 * 60 * 1000 },
-    { label: "Tambah 1 Jam", nilai: 60 * 60 * 1000 },
-    { label: "Tambah 2 Jam", nilai: 2 * 60 * 60 * 1000 }
+  const PILIHAN_TAMBAH_HARI = [
+    { label: "Tambah 1 Hari", nilai: DURASI_SATU_HARI },
+    { label: "Tambah 3 Hari", nilai: 3 * DURASI_SATU_HARI }
   ];
 
   const elemen = {
     tampilanLanding: document.getElementById("tampilanLanding"),
     tampilanAutentikasi: document.getElementById("tampilanAutentikasi"),
+    tampilanProfil: document.getElementById("tampilanProfil"),
     tampilanAplikasi: document.getElementById("tampilanAplikasi"),
     sidebarAplikasi: document.getElementById("sidebarAplikasi"),
     areaScrollAplikasi: document.getElementById("areaScrollAplikasi"),
@@ -27,9 +27,16 @@ const AplikasiIPgrade = (function () {
     tombolTemaGlobal: document.getElementById("tombolTemaGlobal"),
     labelTemaGlobal: document.getElementById("labelTemaGlobal"),
     teksKetikanIndex: document.getElementById("teksKetikanIndex"),
-    loginUsername: document.getElementById("loginUsername"),
-    ingatAkunLogin: document.getElementById("ingatAkunLogin"),
-    tombolLupakanAkun: document.getElementById("tombolLupakanAkun"),
+    pilihanLoginAwal: document.getElementById("pilihanLoginAwal"),
+    formEmailLogin: document.getElementById("formEmailLogin"),
+    formLogin: document.getElementById("formLogin"),
+    formRegister: document.getElementById("formRegister"),
+    formProfil: document.getElementById("formProfil"),
+    inputEmailLogin: document.getElementById("inputEmailLogin"),
+    loginPassword: document.getElementById("loginPassword"),
+    registerEmail: document.getElementById("registerEmail"),
+    teksEmailLoginAktif: document.getElementById("teksEmailLoginAktif"),
+    teksAkunBelumAda: document.getElementById("teksAkunBelumAda"),
     daftarCountdownKelasDashboard: document.getElementById("daftarCountdownKelasDashboard"),
     kontrolPaginationDashboard: document.getElementById("kontrolPaginationDashboard"),
     daftarKelasManajemen: document.getElementById("daftarKelasManajemen"),
@@ -42,8 +49,96 @@ const AplikasiIPgrade = (function () {
     halamanCountdownDashboard: 1,
     grafikAktif: null,
     intervalCountdown: null,
-    notifikasiTemaSudahDitampilkan: false
+    emailAuthAktif: ""
   };
+
+  const IKON_SVG = {
+    "dashboard": `<svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 30 L32 9 L57 30" fill="none"/>
+    <path d="M13 28 V56 H51 V28 L32 13 Z" fill="var(--icon-primary, #A3E635)"/>
+    <path d="M14 18 V28" fill="none"/>
+    <path d="M25 22 H31 V29 H25 Z" fill="var(--icon-surface, #FFFFFF)"/>
+    <path d="M35 22 H41 V29 H35 Z" fill="var(--icon-surface, #FFFFFF)"/>
+    <path d="M20 36 H31 V45 H20 Z" fill="var(--icon-accent, #FACC15)"/>
+    <path d="M35 36 H46 V45 H35 Z" fill="var(--icon-secondary, #38BDF8)"/>
+    <path d="M20 48 H31 V56 H20 Z" fill="var(--icon-secondary, #38BDF8)"/>
+    <path d="M35 48 H46 V56 H35 Z" fill="var(--icon-accent, #FB923C)"/>
+  </g>
+</svg>`,
+    "manajemen-kelas": `<svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 18 H25 L32 25 H55 V50 H8 Z" fill="var(--icon-accent, #FBBF24)"/>
+    <path d="M11 28 H57 L51 54 H7 Z" fill="var(--icon-surface, #FDE68A)"/>
+    <circle cx="27" cy="39" r="6" fill="var(--icon-surface, #FFFFFF)"/>
+    <circle cx="40" cy="37" r="6" fill="var(--icon-surface, #FFFFFF)"/>
+    <path d="M17 52 C18 44 22 40 27 40 C32 40 36 44 37 52 Z" fill="var(--icon-surface, #FFFFFF)"/>
+    <path d="M34 50 C35 43 38 39 43 39 C48 39 52 43 53 50 Z" fill="var(--icon-surface, #FFFFFF)"/>
+  </g>
+</svg>`,
+    "data-semester": `<svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 17 H20 C25 17 29 19 32 23 C35 19 39 17 44 17 H55 V51 H43 C38 51 35 53 32 56 C29 53 26 51 21 51 H9 Z" fill="var(--icon-primary, #84CC16)"/>
+    <path d="M14 11 H25 C29 11 31 13 32 16 V51 C30 49 27 48 23 48 H14 Z" fill="var(--icon-surface, #FFFFFF)"/>
+    <path d="M50 11 H39 C35 11 33 13 32 16 V51 C34 49 37 48 41 48 H50 Z" fill="var(--icon-surface, #FFFFFF)"/>
+    <path d="M20 23 H29"/>
+    <path d="M20 32 H29"/>
+    <path d="M20 41 H27"/>
+    <path d="M38 22 H43 L47 18"/>
+    <path d="M38 32 H43 L48 27"/>
+    <path d="M38 42 H43 L48 37"/>
+  </g>
+</svg>`,
+    "hasil": `<svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 55 H57"/>
+    <path d="M13 55 V41 H24 V55 Z" fill="var(--icon-surface, #FFFFFF)"/>
+    <path d="M30 55 V31 H41 V55 Z" fill="var(--icon-surface, #FFFFFF)"/>
+    <path d="M47 55 V22 H58 V55 Z" fill="var(--icon-surface, #FFFFFF)"/>
+    <path d="M12 32 L26 18 L39 30 L56 10" fill="none"/>
+    <path d="M48 10 H56 V18" fill="var(--icon-accent, #F97316)"/>
+  </g>
+</svg>`,
+    "light-mode": `<svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="32" cy="32" r="12" fill="var(--icon-accent, #FCD34D)"/>
+    <path d="M32 6 V16"/>
+    <path d="M32 48 V58"/>
+    <path d="M6 32 H16"/>
+    <path d="M48 32 H58"/>
+    <path d="M13 13 L20 20"/>
+    <path d="M44 44 L51 51"/>
+    <path d="M51 13 L44 20"/>
+    <path d="M20 44 L13 51"/>
+  </g>
+</svg>`,
+    "dark-mode": `<svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M47 7 C38 10 31 19 31 30 C31 43 41 53 55 54 C49 60 40 62 31 59 C18 55 9 43 11 29 C13 15 26 5 40 6 C43 6 45 7 47 7 Z" fill="var(--icon-primary, #60A5FA)"/>
+    <path d="M43 18 C38 25 38 34 44 42 C39 40 35 35 35 29 C35 24 38 20 43 18 Z" fill="var(--icon-surface, #FFFFFF)" stroke="none"/>
+  </g>
+</svg>`,
+    "logout": `<svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13 12 H40 V24" fill="none"/>
+    <path d="M40 40 V52 H13 V12" fill="none"/>
+    <path d="M27 32 H55" fill="none"/>
+    <path d="M45 22 L55 32 L45 42" fill="none"/>
+  </g>
+</svg>`
+  };
+
+  function buatIkonSvg(namaIkon, kelasTambahan) {
+    const svg = IKON_SVG[namaIkon];
+    const kelas = String(kelasTambahan || "").replace(/[^a-z0-9_-]/gi, " ").trim();
+
+    if (!svg) {
+      return "";
+    }
+
+    return kelas ? svg.replace('class="ikon-svg"', 'class="ikon-svg ' + kelas + '"') : svg;
+  }
+
 
   function amankanHtml(teks) {
     return String(teks || "")
@@ -71,8 +166,38 @@ const AplikasiIPgrade = (function () {
     return awalan + "-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8);
   }
 
+  function normalisasiEmail(email) {
+    return String(email || "").trim().toLowerCase();
+  }
+
+  function buatKunciAkun(provider, email) {
+    return provider + ":" + normalisasiEmail(email);
+  }
+
+  function normalisasiAkun(akunLama) {
+    const akun = akunLama || {};
+    const provider = akun.provider || (akun.email ? "email" : "legacy");
+    const email = normalisasiEmail(akun.email || (provider === "email" ? akun.username : ""));
+    const kunciAkun = akun.kunciAkun || (provider === "legacy" ? String(akun.username || "").trim() : buatKunciAkun(provider, email));
+
+    return Object.assign({}, akun, {
+      idAkun: akun.idAkun || buatId("akun"),
+      username: akun.username || email || kunciAkun,
+      email: email,
+      provider: provider,
+      kunciAkun: kunciAkun
+    });
+  }
+
   function ambilSemuaAkun() {
-    return bacaJson(KUNCI_AKUN, []);
+    const daftarAkun = bacaJson(KUNCI_AKUN, []);
+    const daftarTernormalisasi = daftarAkun.map(normalisasiAkun);
+
+    if (JSON.stringify(daftarAkun) !== JSON.stringify(daftarTernormalisasi)) {
+      simpanSemuaAkun(daftarTernormalisasi);
+    }
+
+    return daftarTernormalisasi;
   }
 
   function simpanSemuaAkun(daftarAkun) {
@@ -89,6 +214,27 @@ const AplikasiIPgrade = (function () {
 
   function hapusSesiAktif() {
     localStorage.removeItem(KUNCI_SESI);
+  }
+
+  function ambilSemuaProfil() {
+    return bacaJson(KUNCI_PROFIL, {});
+  }
+
+  function simpanSemuaProfil(daftarProfil) {
+    simpanJson(KUNCI_PROFIL, daftarProfil);
+  }
+
+  function ambilProfilPengguna(kunciAkun) {
+    const semuaProfil = ambilSemuaProfil();
+    return semuaProfil[kunciAkun] || {};
+  }
+
+  function simpanProfilPengguna(kunciAkun, profil) {
+    const semuaProfil = ambilSemuaProfil();
+    semuaProfil[kunciAkun] = Object.assign({}, semuaProfil[kunciAkun] || {}, profil, {
+      diperbaruiPada: Date.now()
+    });
+    simpanSemuaProfil(semuaProfil);
   }
 
   function ambilSemuaKelas() {
@@ -138,15 +284,33 @@ const AplikasiIPgrade = (function () {
     simpanSemuaKelas(semuaKelas);
   }
 
-  function cariAkun(username) {
-    const target = String(username || "").trim().toLowerCase();
+  function cariAkun(identitas) {
+    const target = String(identitas || "").trim().toLowerCase();
     return ambilSemuaAkun().find(function (akun) {
-      return String(akun.username || "").trim().toLowerCase() === target;
+      return String(akun.kunciAkun || "").trim().toLowerCase() === target ||
+        normalisasiEmail(akun.email) === target ||
+        String(akun.username || "").trim().toLowerCase() === target;
     }) || null;
   }
 
-  function usernameSudahDipakai(username) {
-    return Boolean(cariAkun(username));
+  function akunSudahTerdaftar(email) {
+    return Boolean(cariAkun(normalisasiEmail(email)));
+  }
+
+  function ambilAkunAktif() {
+    return cariAkun(ambilSesiAktif());
+  }
+
+  function profilAktifLengkap() {
+    const kunciAkun = ambilSesiAktif();
+    const profil = ambilProfilPengguna(kunciAkun);
+    return Boolean(String(profil.nama || "").trim());
+  }
+
+  function ambilNamaTampilPengguna(kunciAkun) {
+    const profil = ambilProfilPengguna(kunciAkun);
+    const akun = cariAkun(kunciAkun);
+    return String(profil.nama || (akun && (akun.email || akun.username)) || kunciAkun || "-").trim();
   }
 
   function ambilTemaTersimpan() {
@@ -164,11 +328,11 @@ const AplikasiIPgrade = (function () {
     localStorage.setItem(KUNCI_TEMA, temaAktif);
 
     if (elemen.labelTemaGlobal) {
-      elemen.labelTemaGlobal.textContent = temaAktif === "gelap" ? "Mode Terang" : "Mode Gelap";
+      elemen.labelTemaGlobal.innerHTML = buatIkonSvg(temaAktif === "terang" ? "light-mode" : "dark-mode", "ikon-tema");
     }
 
     if (elemen.tombolTemaGlobal) {
-      elemen.tombolTemaGlobal.setAttribute("aria-label", temaAktif === "gelap" ? "Ganti ke mode terang" : "Ganti ke mode gelap");
+      elemen.tombolTemaGlobal.setAttribute("aria-label", temaAktif === "gelap" ? "Tema aktif mode gelap. Ganti ke mode terang" : "Tema aktif mode terang. Ganti ke mode gelap");
       elemen.tombolTemaGlobal.setAttribute("aria-pressed", temaAktif === "gelap" ? "true" : "false");
     }
   }
@@ -183,14 +347,16 @@ const AplikasiIPgrade = (function () {
     }
 
     return {
-      x: window.innerWidth - 36,
+      x: 36,
       y: 36
     };
   }
 
   function perbaruiTemaAktif(temaBaru) {
     terapkanTema(temaBaru);
-    renderSidebar(keadaan.halamanAktif);
+    if (ambilSesiAktif()) {
+      renderSidebar(keadaan.halamanAktif);
+    }
 
     if (keadaan.halamanAktif === "hasil") {
       renderHasil();
@@ -221,42 +387,113 @@ const AplikasiIPgrade = (function () {
     });
   }
 
-  function tampilkanNotifikasiTemaSekali() {
-    if (keadaan.notifikasiTemaSudahDitampilkan) {
-      return;
-    }
-
-    keadaan.notifikasiTemaSudahDitampilkan = true;
-    tampilkanNotifikasi("Tema berhasil diganti ke " + (ambilTemaTersimpan() === "terang" ? "mode terang." : "mode gelap."), "sukses");
-  }
-
   function ambilWarnaGrafik() {
     const modeTerang = ambilTemaTersimpan() === "terang";
     return {
-      areaAwal: modeTerang ? "rgba(34, 211, 238, 0.28)" : "rgba(167, 139, 250, 0.28)",
-      areaAkhir: modeTerang ? "rgba(255, 183, 3, 0.16)" : "rgba(34, 211, 238, 0.10)",
-      garis: modeTerang ? "#7c3aed" : "#a78bfa",
-      titik: modeTerang ? "#ffb703" : "#facc15",
-      batasTitik: modeTerang ? "#111111" : "#f8fafc",
-      teks: modeTerang ? "#111111" : "#f8fafc",
-      grid: modeTerang ? "rgba(17, 17, 17, 0.18)" : "rgba(248, 250, 252, 0.18)"
+      areaAwal: modeTerang ? "rgba(14, 165, 233, 0.28)" : "rgba(96, 165, 250, 0.26)",
+      areaAkhir: modeTerang ? "rgba(249, 115, 22, 0.14)" : "rgba(45, 212, 191, 0.12)",
+      garis: modeTerang ? "#65A30D" : "#60A5FA",
+      titik: modeTerang ? "#F97316" : "#FBBF24",
+      batasTitik: modeTerang ? "#111827" : "#F9FAFB",
+      teks: modeTerang ? "#111827" : "#F9FAFB",
+      grid: modeTerang ? "rgba(17, 24, 39, 0.18)" : "rgba(249, 250, 251, 0.18)"
     };
   }
 
+  function tampilkanLangkahAuth(langkahAktif) {
+    [
+      { nama: "awal", panel: elemen.pilihanLoginAwal },
+      { nama: "email", panel: elemen.formEmailLogin },
+      { nama: "login", panel: elemen.formLogin },
+      { nama: "register", panel: elemen.formRegister }
+    ].forEach(function (item) {
+      if (item.panel) {
+        item.panel.classList.toggle("tersembunyi", item.nama !== langkahAktif);
+      }
+    });
+  }
+
+  function resetTombolLihatPassword() {
+    Array.from(document.querySelectorAll(".tombol-lihat-password")).forEach(function (tombol) {
+      const input = document.getElementById(tombol.getAttribute("data-target-password"));
+      if (input) {
+        input.type = "password";
+      }
+      tombol.textContent = "Lihat";
+    });
+  }
+
   function isiLoginDariAkunDiingat() {
-    const usernameDiingat = localStorage.getItem(KUNCI_USERNAME_DIINGAT) || "";
+    keadaan.emailAuthAktif = "";
+    if (elemen.formEmailLogin) {
+      elemen.formEmailLogin.reset();
+    }
+    if (elemen.formLogin) {
+      elemen.formLogin.reset();
+    }
+    if (elemen.formRegister) {
+      elemen.formRegister.reset();
+    }
+    if (elemen.teksAkunBelumAda) {
+      elemen.teksAkunBelumAda.classList.add("tersembunyi");
+    }
+    resetTombolLihatPassword();
+    tampilkanLangkahAuth("awal");
+  }
 
-    if (elemen.loginUsername && usernameDiingat) {
-      elemen.loginUsername.value = usernameDiingat;
+  function tampilkanInputEmail() {
+    tampilkanLangkahAuth("email");
+    window.requestAnimationFrame(function () {
+      if (elemen.inputEmailLogin) {
+        elemen.inputEmailLogin.focus();
+      }
+    });
+  }
+
+  function siapkanLoginEmail(email) {
+    const emailNormal = normalisasiEmail(email);
+    keadaan.emailAuthAktif = emailNormal;
+
+    if (elemen.teksEmailLoginAktif) {
+      elemen.teksEmailLoginAktif.textContent = emailNormal;
+    }
+    if (elemen.loginPassword) {
+      elemen.loginPassword.value = "";
+    }
+    if (elemen.registerEmail) {
+      elemen.registerEmail.value = emailNormal;
+    }
+    if (elemen.teksAkunBelumAda) {
+      elemen.teksAkunBelumAda.classList.toggle("tersembunyi", akunSudahTerdaftar(emailNormal));
     }
 
-    if (elemen.ingatAkunLogin) {
-      elemen.ingatAkunLogin.checked = Boolean(usernameDiingat);
+    resetTombolLihatPassword();
+    tampilkanLangkahAuth("login");
+    window.requestAnimationFrame(function () {
+      if (elemen.loginPassword) {
+        elemen.loginPassword.focus();
+      }
+    });
+  }
+
+  function siapkanRegisterEmail(email) {
+    const emailNormal = normalisasiEmail(email || keadaan.emailAuthAktif || (elemen.registerEmail && elemen.registerEmail.value));
+    keadaan.emailAuthAktif = emailNormal;
+
+    if (elemen.registerEmail) {
+      elemen.registerEmail.value = emailNormal;
     }
 
-    if (elemen.tombolLupakanAkun) {
-      elemen.tombolLupakanAkun.classList.toggle("tersembunyi", !usernameDiingat);
-    }
+    document.getElementById("registerPassword").value = "";
+    document.getElementById("registerVerifikasi").value = "";
+    resetTombolLihatPassword();
+    tampilkanLangkahAuth("register");
+    window.requestAnimationFrame(function () {
+      const targetFokus = emailNormal ? document.getElementById("registerPassword") : elemen.registerEmail;
+      if (targetFokus) {
+        targetFokus.focus();
+      }
+    });
   }
 
   function formatAngka(nilai) {
@@ -376,6 +613,17 @@ const AplikasiIPgrade = (function () {
     }
   }
 
+  function validasiEmail(email) {
+    const emailNormal = normalisasiEmail(email);
+    const polaEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!polaEmail.test(emailNormal)) {
+      throw new Error("Masukkan email yang valid.");
+    }
+
+    return emailNormal;
+  }
+
   function validasiPassword(password, verifikasiPassword) {
     if (!String(password || "").trim()) {
       throw new Error("Password wajib diisi.");
@@ -386,11 +634,73 @@ const AplikasiIPgrade = (function () {
     }
   }
 
+  function buatAkunEmail(email, password) {
+    const emailNormal = validasiEmail(email);
+    return {
+      idAkun: buatId("akun"),
+      kunciAkun: buatKunciAkun("email", emailNormal),
+      provider: "email",
+      username: emailNormal,
+      email: emailNormal,
+      password: password,
+      dibuatPada: Date.now()
+    };
+  }
+
+  function ambilAtauBuatAkunSosial(provider) {
+    const emailDemo = provider === "google" ? "demo.google@ipgrade.local" : "demo.facebook@ipgrade.local";
+    const kunciAkun = buatKunciAkun(provider, emailDemo);
+    const akunAda = cariAkun(kunciAkun);
+
+    if (akunAda) {
+      return akunAda;
+    }
+
+    // TODO: Ganti simulasi localStorage ini dengan backend Django dan OAuth asli.
+    const akunBaru = {
+      idAkun: buatId("akun"),
+      kunciAkun: kunciAkun,
+      provider: provider,
+      username: emailDemo,
+      email: emailDemo,
+      password: "",
+      dibuatPada: Date.now()
+    };
+    const daftarAkun = ambilSemuaAkun();
+    daftarAkun.push(akunBaru);
+    simpanSemuaAkun(daftarAkun);
+    return akunBaru;
+  }
+
+  function isiFormProfilAktif() {
+    const kunciAkun = ambilSesiAktif();
+    const profil = ambilProfilPengguna(kunciAkun);
+
+    document.getElementById("inputNamaProfil").value = profil.nama || "";
+    document.getElementById("inputNimProfil").value = profil.nim || "";
+    document.getElementById("inputKelasProfil").value = profil.kelas || "";
+  }
+
+  function lanjutkanSetelahAutentikasi() {
+    if (!ambilSesiAktif()) {
+      tampilkanTampilan("autentikasi");
+      return;
+    }
+
+    if (!profilAktifLengkap()) {
+      isiFormProfilAktif();
+      tampilkanTampilan("profil");
+      return;
+    }
+
+    tampilkanHalamanAplikasi("dashboard");
+  }
+
   function buatKelasBaru(namaKelas) {
     return {
       idKelas: buatId("kelas"),
       namaKelas: namaKelas,
-      kedaluwarsaPada: Date.now() + DURASI_ENAM_JAM,
+      kedaluwarsaPada: Date.now() + DURASI_SATU_HARI,
       dibuatPada: Date.now(),
       diperbaruiPada: Date.now(),
       daftarMahasiswa: []
@@ -502,7 +812,7 @@ const AplikasiIPgrade = (function () {
     simpanKelasPengguna(username, daftarBaru);
   }
 
-  function resetTimerKelasKeEnamJam(username, idKelas) {
+  function resetTimerKelasKeSatuHari(username, idKelas) {
     const daftarKelas = ambilKelasPengguna(username);
     const daftarBaru = daftarKelas.map(function (kelas) {
       if (kelas.idKelas !== idKelas) {
@@ -510,7 +820,7 @@ const AplikasiIPgrade = (function () {
       }
 
       return Object.assign({}, kelas, {
-        kedaluwarsaPada: Date.now() + DURASI_ENAM_JAM,
+        kedaluwarsaPada: Date.now() + DURASI_SATU_HARI,
         diperbaruiPada: Date.now()
       });
     });
@@ -519,17 +829,24 @@ const AplikasiIPgrade = (function () {
   }
 
   function renderSidebar(halamanAktif) {
-    const username = ambilSesiAktif();
+    const kunciAkun = ambilSesiAktif();
+    const akun = ambilAkunAktif();
+    const profil = ambilProfilPengguna(kunciAkun);
+    const namaTampil = ambilNamaTampilPengguna(kunciAkun);
+    const detailTampil = profil.kelas || profil.nim || (akun && (akun.email || akun.username)) || kunciAkun;
     const temaAktif = ambilTemaTersimpan();
-    const labelTema = temaAktif === "gelap" ? "Mode Terang" : "Mode Gelap";
+    const namaIkonTema = temaAktif === "terang" ? "light-mode" : "dark-mode";
+    const ikonTema = buatIkonSvg(namaIkonTema, "ikon-tema");
+    const labelTema = "<span class='teks-tema-sidebar'>Tema</span><span class='ikon-tema-sidebar' aria-hidden='true'>" + ikonTema + "</span>";
+    const ariaTema = temaAktif === "gelap" ? "Tema aktif mode gelap. Ganti ke mode terang" : "Tema aktif mode terang. Ganti ke mode gelap";
 
     elemen.sidebarAplikasi.innerHTML = [
       "<div class='kepala-sidebar'>",
         "<div class='merek-sidebar'>",
           "<span class='logo-merek'>IP</span>",
           "<div class='teks-merek'>",
-            "<strong>IPgrade</strong>",
-            "<small>" + amankanHtml(username) + "</small>",
+            "<strong>" + amankanHtml(namaTampil) + "</strong>",
+            "<small>" + amankanHtml(detailTampil) + "</small>",
           "</div>",
         "</div>",
         "<button type='button' id='tombolCiutSidebar' class='tombol-ciut-sidebar'>||</button>",
@@ -541,11 +858,11 @@ const AplikasiIPgrade = (function () {
         buatMenuSidebar("hasil", "Hasil", halamanAktif),
       "</nav>",
       "<div class='panel-tema-sidebar'>",
-        "<span class='label-kartu'>Tema</span>",
-        "<button type='button' id='tombolTemaSidebar' class='tombol-tema-sidebar'>" + labelTema + "</button>",
+        "<button type='button' id='tombolTemaSidebar' class='tombol-tema-sidebar' aria-label='" + ariaTema + "'>" + labelTema + "</button>",
       "</div>",
       "<div class='aksi-sidebar'>",
         "<button type='button' id='tombolLogoutSidebar' class='tombol tombol-bahaya tombol-penuh'>",
+          "<span class='ikon-logout-sidebar' aria-hidden='true'>" + buatIkonSvg("logout", "ikon-logout") + "</span>",
           "<span class='teks-logout-sidebar'>Logout</span>",
         "</button>",
       "</div>"
@@ -560,7 +877,6 @@ const AplikasiIPgrade = (function () {
 
     document.getElementById("tombolTemaSidebar").addEventListener("click", function (event) {
       ubahTema(event);
-      tampilkanNotifikasiTemaSekali();
     });
 
     document.getElementById("tombolLogoutSidebar").addEventListener("click", function () {
@@ -578,14 +894,21 @@ const AplikasiIPgrade = (function () {
   }
 
   function buatMenuSidebar(kode, label, halamanAktif) {
+    const daftarIkon = {
+      dashboard: "dashboard",
+      kelas: "manajemen-kelas",
+      semester: "data-semester",
+      hasil: "hasil"
+    };
+    const ikon = buatIkonSvg(daftarIkon[kode], "ikon-menu-gambar");
+
     return [
-      "<button type='button' class='item-menu-sidebar " + (kode === halamanAktif ? "aktif" : "") + "' data-menu-aplikasi='" + kode + "'>",
-        "<span class='ikon-menu'>" + label.slice(0, 2).toUpperCase() + "</span>",
+      "<button type='button' class='item-menu-sidebar " + (kode === halamanAktif ? "aktif" : "") + "' data-menu-aplikasi='" + kode + "' aria-label='" + label + "' title='" + label + "'>",
+        "<span class='ikon-menu' aria-hidden='true'>" + ikon + "</span>",
         "<span class='teks-menu-sidebar'>" + label + "</span>",
       "</button>"
     ].join("");
   }
-
   function resetScrollKontenAplikasi() {
     if (!elemen.areaScrollAplikasi) {
       return;
@@ -602,6 +925,7 @@ const AplikasiIPgrade = (function () {
   function tampilkanTampilan(target) {
     elemen.tampilanLanding.classList.toggle("tersembunyi", target !== "landing");
     elemen.tampilanAutentikasi.classList.toggle("tersembunyi", target !== "autentikasi");
+    elemen.tampilanProfil.classList.toggle("tersembunyi", target !== "profil");
     elemen.tampilanAplikasi.classList.toggle("tersembunyi", target !== "aplikasi");
     document.body.classList.toggle("mode-aplikasi", target === "aplikasi");
 
@@ -614,6 +938,12 @@ const AplikasiIPgrade = (function () {
     const username = ambilSesiAktif();
     if (!username) {
       tampilkanTampilan("autentikasi");
+      return;
+    }
+
+    if (!profilAktifLengkap()) {
+      isiFormProfilAktif();
+      tampilkanTampilan("profil");
       return;
     }
 
@@ -654,7 +984,7 @@ const AplikasiIPgrade = (function () {
     const daftarKelas = ambilKelasPengguna(username);
     const totalMahasiswa = hitungTotalMahasiswa(daftarKelas);
 
-    document.getElementById("namaPenggunaDashboard").textContent = username;
+    document.getElementById("namaPenggunaDashboard").textContent = ambilNamaTampilPengguna(username);
     document.getElementById("jumlahKelasDashboard").textContent = String(daftarKelas.length);
     document.getElementById("jumlahMahasiswaDashboard").textContent = String(totalMahasiswa);
 
@@ -708,7 +1038,7 @@ const AplikasiIPgrade = (function () {
           "<span class='teks-tipis'>" + (kelas.daftarMahasiswa || []).length + " mahasiswa</span>",
         "</div>",
         "<div class='grup-tambah-jam'>",
-          PILIHAN_TAMBAH_JAM.map(function (opsi) {
+          PILIHAN_TAMBAH_HARI.map(function (opsi) {
             return "<button type='button' class='tombol tombol-garis tombol-mini' data-aksi='tambah-jam-kelas' data-id-kelas='" + kelas.idKelas + "' data-tambahan='" + opsi.nilai + "'>" + opsi.label + "</button>";
           }).join(""),
         "</div>",
@@ -769,7 +1099,7 @@ const AplikasiIPgrade = (function () {
             "</div>",
           "</div>",
           "<div class='grup-tambah-jam'>",
-            PILIHAN_TAMBAH_JAM.map(function (opsi) {
+            PILIHAN_TAMBAH_HARI.map(function (opsi) {
               return "<button type='button' class='tombol tombol-garis tombol-mini' data-aksi='tambah-jam-kelas' data-id-kelas='" + kelas.idKelas + "' data-tambahan='" + opsi.nilai + "'>" + opsi.label + "</button>";
             }).join(""),
           "</div>",
@@ -1271,17 +1601,16 @@ const AplikasiIPgrade = (function () {
   }
 
   function inisialisasiEvent() {
-    inisialisasiTab(document.getElementById("kontainerTabAutentikasi"));
     inisialisasiTab(document.getElementById("kontainerTabHasil"));
 
     if (elemen.tombolTemaGlobal) {
       elemen.tombolTemaGlobal.addEventListener("click", function (event) {
         ubahTema(event);
-        tampilkanNotifikasiTemaSekali();
       });
     }
 
     document.getElementById("tombolMasukAutentikasi").addEventListener("click", function () {
+      isiLoginDariAkunDiingat();
       tampilkanTampilan("autentikasi");
     });
 
@@ -1296,79 +1625,134 @@ const AplikasiIPgrade = (function () {
       });
     });
 
-    if (elemen.tombolLupakanAkun) {
-      elemen.tombolLupakanAkun.addEventListener("click", function () {
-        localStorage.removeItem(KUNCI_USERNAME_DIINGAT);
-        if (elemen.loginUsername) {
-          elemen.loginUsername.value = "";
-        }
-        if (elemen.ingatAkunLogin) {
-          elemen.ingatAkunLogin.checked = false;
-        }
-        isiLoginDariAkunDiingat();
-        tampilkanNotifikasi("Username tersimpan sudah dihapus.", "peringatan");
-      });
-    }
+    document.getElementById("tombolMasukEmail").addEventListener("click", function () {
+      tampilkanInputEmail();
+    });
 
-    document.getElementById("formRegister").addEventListener("submit", function (event) {
+    Array.from(document.querySelectorAll("[data-auth-kembali]")).forEach(function (tombol) {
+      tombol.addEventListener("click", function () {
+        isiLoginDariAkunDiingat();
+      });
+    });
+
+    document.getElementById("tombolLoginGoogle").addEventListener("click", function () {
+      const akun = ambilAtauBuatAkunSosial("google");
+      simpanSesiAktif(akun.kunciAkun);
+      lanjutkanSetelahAutentikasi();
+    });
+
+    document.getElementById("tombolLoginFacebook").addEventListener("click", function () {
+      const akun = ambilAtauBuatAkunSosial("facebook");
+      simpanSesiAktif(akun.kunciAkun);
+      lanjutkanSetelahAutentikasi();
+    });
+
+    elemen.formEmailLogin.addEventListener("submit", function (event) {
       event.preventDefault();
-      const username = document.getElementById("registerUsername").value.trim();
-      const password = document.getElementById("registerPassword").value;
-      const verifikasiPassword = document.getElementById("registerVerifikasi").value;
 
       try {
-        validasiUsername(username);
-        validasiPassword(password, verifikasiPassword);
-
-        if (usernameSudahDipakai(username)) {
-          throw new Error("Username sudah digunakan");
-        }
-
-        const daftarAkun = ambilSemuaAkun();
-        daftarAkun.push({
-          idAkun: buatId("akun"),
-          username: username,
-          password: password,
-          dibuatPada: Date.now()
-        });
-        simpanSemuaAkun(daftarAkun);
-
-        event.target.reset();
-        document.getElementById("loginUsername").value = username;
-        Array.from(document.querySelectorAll(".tombol-lihat-password")).forEach(function (tombol) {
-          tombol.textContent = "Lihat";
-        });
-        aktifkanTab(document.getElementById("kontainerTabAutentikasi"), "login");
-        tampilkanNotifikasi("Register berhasil. Silakan login dengan akun yang baru dibuat.", "sukses");
+        siapkanLoginEmail(validasiEmail(elemen.inputEmailLogin.value));
       } catch (error) {
         tampilkanNotifikasi(error.message, "gagal");
       }
     });
 
-    document.getElementById("formLogin").addEventListener("submit", function (event) {
+    document.getElementById("tombolUbahEmailLogin").addEventListener("click", function () {
+      tampilkanInputEmail();
+    });
+
+    document.getElementById("tombolBukaRegister").addEventListener("click", function () {
+      siapkanRegisterEmail(keadaan.emailAuthAktif);
+    });
+
+    elemen.formLogin.addEventListener("submit", function (event) {
       event.preventDefault();
-      const username = document.getElementById("loginUsername").value.trim();
       const password = document.getElementById("loginPassword").value;
 
       try {
-        validasiUsername(username);
-        const akun = cariAkun(username);
+        const email = validasiEmail(keadaan.emailAuthAktif);
+        const akun = cariAkun(email);
 
-        if (!akun || akun.password !== password) {
-          throw new Error("Login gagal. Periksa kembali username dan password.");
+        if (!String(password || "").trim()) {
+          throw new Error("Password wajib diisi.");
         }
 
-        simpanSesiAktif(akun.username);
-        if (elemen.ingatAkunLogin && elemen.ingatAkunLogin.checked) {
-          localStorage.setItem(KUNCI_USERNAME_DIINGAT, akun.username);
-        } else {
-          localStorage.removeItem(KUNCI_USERNAME_DIINGAT);
+        if (!akun) {
+          throw new Error("Akun belum terdaftar. Pilih Daftar untuk membuat akun.");
         }
-        isiLoginDariAkunDiingat();
+
+        if (akun.provider !== "email") {
+          throw new Error("Akun ini dibuat lewat login sosial. Gunakan tombol sosial yang sesuai.");
+        }
+
+        if (akun.password !== password) {
+          throw new Error("Login gagal. Periksa kembali email dan password.");
+        }
+
+        simpanSesiAktif(akun.kunciAkun);
+        lanjutkanSetelahAutentikasi();
+      } catch (error) {
+        tampilkanNotifikasi(error.message, "gagal");
+      }
+    });
+
+    elemen.formRegister.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+      const verifikasiPassword = document.getElementById("registerVerifikasi").value;
+
+      try {
+        const emailNormal = validasiEmail(email);
+        validasiPassword(password, verifikasiPassword);
+
+        if (akunSudahTerdaftar(emailNormal)) {
+          throw new Error("Akun dengan email ini sudah ada. Login dengan password akun tersebut.");
+        }
+
+        const akunBaru = buatAkunEmail(emailNormal, password);
+        const daftarAkun = ambilSemuaAkun();
+        daftarAkun.push(akunBaru);
+        simpanSemuaAkun(daftarAkun);
+        simpanSesiAktif(akunBaru.kunciAkun);
+        lanjutkanSetelahAutentikasi();
+      } catch (error) {
+        tampilkanNotifikasi(error.message, "gagal");
+      }
+    });
+
+    elemen.formProfil.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const kunciAkun = ambilSesiAktif();
+      const nama = document.getElementById("inputNamaProfil").value.trim();
+      const nim = document.getElementById("inputNimProfil").value.trim();
+      const kelas = document.getElementById("inputKelasProfil").value.trim();
+
+      try {
+        if (!kunciAkun) {
+          throw new Error("Sesi tidak ditemukan. Silakan login ulang.");
+        }
+
+        if (!nama) {
+          throw new Error("Nama wajib diisi.");
+        }
+
+        simpanProfilPengguna(kunciAkun, {
+          nama: nama,
+          nim: nim,
+          kelas: kelas,
+          dibuatPada: ambilProfilPengguna(kunciAkun).dibuatPada || Date.now()
+        });
         tampilkanHalamanAplikasi("dashboard");
       } catch (error) {
         tampilkanNotifikasi(error.message, "gagal");
       }
+    });
+
+    document.getElementById("tombolLogoutProfil").addEventListener("click", function () {
+      hapusSesiAktif();
+      tampilkanTampilan("autentikasi");
+      tampilkanNotifikasi("Kamu sudah logout dari IPgrade.", "peringatan");
     });
 
     document.getElementById("formKelas").addEventListener("submit", function (event) {
@@ -1630,11 +2014,11 @@ const AplikasiIPgrade = (function () {
           });
 
           if (!kelasBaru.kedaluwarsaPada) {
-            kelasBaru.kedaluwarsaPada = Date.now() + DURASI_ENAM_JAM;
+            kelasBaru.kedaluwarsaPada = Date.now() + DURASI_SATU_HARI;
           }
 
           if (infoResetTimer) {
-            kelasBaru.kedaluwarsaPada = Date.now() + DURASI_ENAM_JAM;
+            kelasBaru.kedaluwarsaPada = Date.now() + DURASI_SATU_HARI;
           }
 
           return kelasBaru;
@@ -1643,7 +2027,7 @@ const AplikasiIPgrade = (function () {
         simpanKelasPengguna(username, daftarKelas);
         resetFormSemester();
         renderSemuaHalaman();
-        tampilkanNotifikasi(infoResetTimer ? "Edit ke-3 tercapai. Timer kelas di-reset menjadi 6 jam lagi." : "Data semester berhasil disimpan.", "sukses");
+        tampilkanNotifikasi(infoResetTimer ? "Edit ke-3 tercapai. Timer kelas di-reset menjadi 1 hari lagi." : "Data semester berhasil disimpan.", "sukses");
       } catch (error) {
         tampilkanNotifikasi(error.message, "gagal");
       }
@@ -1817,7 +2201,7 @@ const AplikasiIPgrade = (function () {
           });
 
           if (infoResetTimer) {
-            kelasBaru.kedaluwarsaPada = Date.now() + DURASI_ENAM_JAM;
+            kelasBaru.kedaluwarsaPada = Date.now() + DURASI_SATU_HARI;
           }
 
           return kelasBaru;
