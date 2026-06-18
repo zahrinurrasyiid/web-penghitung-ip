@@ -1498,6 +1498,28 @@ body.sidebar-ciut .area-scroll-aplikasi {
   background: var(--surface-2);
 }
 
+/* =============================================
+   Navigasi Responsif: Sidebar Desktop & Bottom Nav Mobile
+   ============================================= */
+
+.desktop-sidebar {
+  display: none;
+}
+
+.mobile-bottom-nav {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .desktop-sidebar {
+    display: flex;
+  }
+
+  .mobile-bottom-nav {
+    display: none;
+  }
+}
+
 @media (max-width: 1320px) {
   .grid-kelas,
   .grid-semester-baru,
