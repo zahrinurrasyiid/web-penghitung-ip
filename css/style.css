@@ -1551,17 +1551,19 @@ body.sidebar-ciut .area-scroll-aplikasi {
   }
 
   .tata-letak-aplikasi {
-  display: grid;
-  grid-template-columns: var(--lebar-sidebar) minmax(0, 1fr);
-  gap: 24px;
-  width: 100%;
-  max-width: 100vw;
-  height: 100dvh;
-  min-height: 0;
-  padding: 24px;
-  overflow: hidden;
-  align-items: stretch;
+    display: grid;
+    grid-template-columns: var(--lebar-sidebar) minmax(0, 1fr);
+    gap: 24px;
+    width: 100%;
+    max-width: 100vw;
+    height: 100dvh;
+    min-height: 0;
+    padding: 24px;
+    overflow: hidden;
+    align-items: stretch;
+  }
 }
+
 @media (max-width: 560px) {
   .judul-logo {
     text-shadow: 3px 3px 0 var(--accent);
