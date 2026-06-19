@@ -177,7 +177,7 @@
             </header>
 
             <section class="grid-kelas">
-              <article class="kartu-kaca panel-kelas">
+              <article class="kartu-kaca panel-kelas panel-form-kelas">
                 <div class="judul-panel">
                   <span class="label-mikro">Form Kelas</span>
                   <h2 class="judul-panel-besar">Tambah atau Edit Kelas</h2>
@@ -212,7 +212,7 @@
                 </form>
               </article>
 
-              <article class="kartu-kaca panel-kelas">
+              <article class="kartu-kaca panel-kelas panel-daftar-kelas">
                 <div class="judul-panel">
                   <span class="label-mikro">Daftar Kelas</span>
                   <h2 class="judul-panel-besar">Kelas dan Mahasiswa</h2>
@@ -233,7 +233,7 @@
             </header>
 
             <section class="grid-semester-baru">
-              <article class="kartu-kaca panel-semester">
+              <article class="kartu-kaca panel-semester panel-form-semester">
                 <div class="judul-panel">
                   <span class="label-mikro">Pilih Data</span>
                   <h2 class="judul-panel-besar">Kelas dan Mahasiswa</h2>
@@ -279,7 +279,7 @@
                 </form>
               </article>
 
-              <article class="kartu-kaca panel-semester">
+              <article class="kartu-kaca panel-semester panel-daftar-semester">
                 <div class="judul-panel">
                   <span class="label-mikro">Semester Tersimpan</span>
                   <h2 class="judul-panel-besar">Daftar Semester Mahasiswa</h2>
@@ -326,7 +326,7 @@
 
                   <section class="panel-tab aktif" data-panel-tab="ringkasan">
                     <div id="pesanKosongHasil" class="keadaan-kosong">Belum ada mahasiswa yang dipilih atau data semester masih kosong.</div>
-                    <div id="kartuProfilHasil" class="grid-identitas-hasil"></div>
+                    <div id="kartuProfilHasil" class="grid-identitas-hasil ringkasan-hasil-terpilih"></div>
                     <div id="kartuStatistikHasil" class="grid-statistik-hasil"></div>
                     <div id="daftarAccordionSemester" class="daftar-akordeon-semester"></div>
                   </section>
@@ -346,6 +346,7 @@
     </div>
   </section>
 
+  <script src="../js/api.js"></script>
   <script src="../js/script.js"></script>
 </body>
 </html>

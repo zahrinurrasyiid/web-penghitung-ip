@@ -131,7 +131,7 @@ body {
 }
 
 body.sidebar-ciut {
-  --lebar-sidebar: 102px;
+  --lebar-sidebar: 112px;
 }
 
 body.mode-aplikasi {
@@ -455,6 +455,14 @@ body.mode-aplikasi .tombol-mode-tema {
   gap: 12px;
   margin-top: 8px;
   flex-wrap: wrap;
+}
+
+#formSemester .baris-tombol-form {
+  position: sticky;
+  bottom: 12px;
+  z-index: 3;
+  padding-top: 12px;
+  background: var(--surface);
 }
 
 .baris-pengingat-login {
@@ -1014,6 +1022,20 @@ body.mode-aplikasi #tampilanAplikasi {
   padding: clamp(20px, 3vw, 28px);
 }
 
+.panel-form-kelas,
+.panel-form-semester,
+.panel-daftar-kelas,
+.panel-daftar-semester {
+  align-self: start;
+}
+
+.panel-daftar-kelas,
+.panel-daftar-semester {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .panel-dashboard-besar {
   display: flex;
   flex-direction: column;
@@ -1059,6 +1081,17 @@ body.mode-aplikasi #tampilanAplikasi {
   overflow-y: auto;
   align-content: start;
   overscroll-behavior: contain;
+}
+
+#halamanKelas .daftar-kelas-manajemen,
+#halamanSemester .daftar-semester-tersimpan {
+  max-height: min(620px, calc(100dvh - 270px));
+  min-height: 180px;
+  padding-right: 6px;
+  overflow-y: auto;
+  align-content: start;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .item-kelas-dashboard,
@@ -1130,6 +1163,14 @@ body.mode-aplikasi #tampilanAplikasi {
   margin-top: 18px;
 }
 
+.daftar-mahasiswa-kelas-scroll {
+  max-height: 190px;
+  padding-right: 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
 .baris-mahasiswa {
   padding: 14px 16px;
   background: var(--surface-2);
@@ -1167,6 +1208,15 @@ body.mode-aplikasi #tampilanAplikasi {
   grid-template-columns: minmax(0, 2.1fr) minmax(88px, 0.7fr) minmax(96px, 0.7fr) auto;
   gap: 10px;
   min-width: 0;
+}
+
+#halamanSemester .daftar-mata-kuliah-form {
+  max-height: min(430px, 48dvh);
+  padding-right: 6px;
+  overflow-y: auto;
+  align-content: start;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .judul-kartu-semester {
@@ -1227,6 +1277,59 @@ body.mode-aplikasi #tampilanAplikasi {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 18px;
+}
+
+.ringkasan-hasil-terpilih {
+  grid-template-columns: 1fr;
+}
+
+.grid-statistik-hasil:empty {
+  display: none;
+}
+
+.kartu-ringkasan-terpilih {
+  padding: 20px;
+}
+
+.baris-meta-hasil {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: var(--border-tebal);
+}
+
+.baris-meta-hasil span,
+.baris-identitas-hasil span {
+  overflow-wrap: anywhere;
+}
+
+.baris-identitas-hasil {
+  display: grid;
+  gap: 8px;
+}
+
+.baris-identitas-hasil p,
+.status-ringkasan-hasil {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.04rem;
+  font-weight: 900;
+  line-height: 1.55;
+}
+
+.status-ringkasan-hasil {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: var(--border-tebal);
+  border-radius: var(--radius-kecil);
+  background: var(--accent);
+  box-shadow: 3px 3px 0 var(--shadow);
+  color: #111111;
 }
 
 .kartu-identitas-hasil .angka-ringkasan-hasil {
@@ -1333,29 +1436,63 @@ body.mode-aplikasi #tampilanAplikasi {
   color: #ffffff;
 }
 
+.sidebar-ciut .logo-merek,
 .sidebar-ciut .teks-merek,
 .sidebar-ciut .informasi-sidebar {
   display: none;
 }
 
 .sidebar-ciut .kepala-sidebar {
-  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.sidebar-ciut .merek-sidebar {
+  display: none;
 }
 
 body.sidebar-ciut,
 body.sidebar-ciut .tata-letak-aplikasi,
-body.sidebar-ciut .sidebar,
 body.sidebar-ciut .konten-aplikasi,
 body.sidebar-ciut .area-scroll-aplikasi {
   max-width: 100vw;
   overflow-x: hidden;
 }
+
+body.sidebar-ciut .sidebar {
+  max-width: none;
+  overflow: visible;
+}
+
+body.sidebar-ciut .menu-sidebar {
+  align-items: flex-start;
+  overflow: visible;
+}
+
 .sidebar-ciut .item-menu-sidebar {
-  justify-content: center;
+  width: 64px;
+  max-width: 64px;
+  justify-content: flex-start;
   gap: 0;
-  padding: 0;
+  padding: 0 8px;
   min-height: 58px;
   overflow: hidden;
+  white-space: nowrap;
+  transition:
+    max-width var(--transisi-cepat),
+    width var(--transisi-cepat),
+    transform var(--transisi-cepat),
+    box-shadow var(--transisi-cepat),
+    background-color var(--transisi-cepat),
+    color var(--transisi-cepat);
+}
+
+.sidebar-ciut .item-menu-sidebar:hover,
+.sidebar-ciut .item-menu-sidebar:focus-visible {
+  width: min(238px, calc(100vw - 36px));
+  max-width: min(238px, calc(100vw - 36px));
+  gap: 12px;
+  z-index: 8;
 }
 
 .sidebar-ciut .ikon-menu {
@@ -1363,7 +1500,7 @@ body.sidebar-ciut .area-scroll-aplikasi {
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 42px;
+  width: 44px;
   height: 42px;
   border: var(--border-tebal);
   border-radius: var(--radius-kecil);
@@ -1375,19 +1512,22 @@ body.sidebar-ciut .area-scroll-aplikasi {
 }
 
 .sidebar-ciut .teks-menu-sidebar {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: calc(var(--lebar-sidebar) - 18px);
-  max-width: calc(var(--lebar-sidebar) - 18px);
-  padding: 0 4px;
+  position: static;
+  flex: 0 1 auto;
+  width: auto;
+  max-width: 0;
+  padding: 0;
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.92);
+  transform: translateX(-8px);
   pointer-events: none;
-  text-align: center;
-  white-space: normal;
+  text-align: left;
+  white-space: nowrap;
   line-height: 1.15;
-  transition: opacity var(--transisi-cepat), transform var(--transisi-cepat);
+  overflow: hidden;
+  transition:
+    max-width var(--transisi-cepat),
+    opacity var(--transisi-cepat),
+    transform var(--transisi-cepat);
 }
 
 .sidebar-ciut .item-menu-sidebar:hover .ikon-menu,
@@ -1409,8 +1549,9 @@ body.sidebar-ciut .area-scroll-aplikasi {
 
 .sidebar-ciut .item-menu-sidebar:hover .teks-menu-sidebar,
 .sidebar-ciut .item-menu-sidebar:focus-visible .teks-menu-sidebar {
+  max-width: 158px;
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translateX(0);
 }
 
 .sidebar-ciut .panel-tema-sidebar {
@@ -1480,13 +1621,21 @@ body.sidebar-ciut .area-scroll-aplikasi {
 
 .sidebar::-webkit-scrollbar,
 .area-scroll-aplikasi::-webkit-scrollbar,
-#halamanDashboard .daftar-kelas-dashboard::-webkit-scrollbar {
+#halamanDashboard .daftar-kelas-dashboard::-webkit-scrollbar,
+#halamanKelas .daftar-kelas-manajemen::-webkit-scrollbar,
+#halamanKelas .daftar-mahasiswa-kelas-scroll::-webkit-scrollbar,
+#halamanSemester .daftar-semester-tersimpan::-webkit-scrollbar,
+#halamanSemester .daftar-mata-kuliah-form::-webkit-scrollbar {
   width: 12px;
 }
 
 .sidebar::-webkit-scrollbar-thumb,
 .area-scroll-aplikasi::-webkit-scrollbar-thumb,
-#halamanDashboard .daftar-kelas-dashboard::-webkit-scrollbar-thumb {
+#halamanDashboard .daftar-kelas-dashboard::-webkit-scrollbar-thumb,
+#halamanKelas .daftar-kelas-manajemen::-webkit-scrollbar-thumb,
+#halamanKelas .daftar-mahasiswa-kelas-scroll::-webkit-scrollbar-thumb,
+#halamanSemester .daftar-semester-tersimpan::-webkit-scrollbar-thumb,
+#halamanSemester .daftar-mata-kuliah-form::-webkit-scrollbar-thumb {
   border: 3px solid var(--surface);
   border-radius: 999px;
   background: var(--primary);
@@ -1494,7 +1643,11 @@ body.sidebar-ciut .area-scroll-aplikasi {
 
 .sidebar::-webkit-scrollbar-track,
 .area-scroll-aplikasi::-webkit-scrollbar-track,
-#halamanDashboard .daftar-kelas-dashboard::-webkit-scrollbar-track {
+#halamanDashboard .daftar-kelas-dashboard::-webkit-scrollbar-track,
+#halamanKelas .daftar-kelas-manajemen::-webkit-scrollbar-track,
+#halamanKelas .daftar-mahasiswa-kelas-scroll::-webkit-scrollbar-track,
+#halamanSemester .daftar-semester-tersimpan::-webkit-scrollbar-track,
+#halamanSemester .daftar-mata-kuliah-form::-webkit-scrollbar-track {
   background: var(--surface-2);
 }
 
@@ -1537,6 +1690,7 @@ body.sidebar-ciut .area-scroll-aplikasi {
 
   body.mode-aplikasi #tampilanAplikasi {
     height: auto;
+    min-height: 100dvh;
   }
 
   .tombol-mode-tema {
@@ -1552,15 +1706,90 @@ body.sidebar-ciut .area-scroll-aplikasi {
 
   .tata-letak-aplikasi {
     display: grid;
-    grid-template-columns: var(--lebar-sidebar) minmax(0, 1fr);
-    gap: 24px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
     width: 100%;
     max-width: 100vw;
-    height: 100dvh;
+    height: auto;
+    min-height: 100dvh;
+    padding: 14px;
+    overflow: visible;
+    align-items: start;
+  }
+
+  .sidebar {
+    position: relative;
+    height: auto;
+    max-height: none;
+    padding: 14px;
+    overflow: visible;
+  }
+
+  .kepala-sidebar {
+    margin-bottom: 14px;
+  }
+
+  .tombol-ciut-sidebar {
+    display: none;
+  }
+
+  .menu-sidebar {
+    flex-direction: row;
+    gap: 10px;
+    padding-bottom: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .item-menu-sidebar {
+    width: auto;
+    min-width: max-content;
+    padding: 0 14px;
+  }
+
+  .panel-tema-sidebar,
+  .aksi-sidebar {
+    margin-top: 12px;
+  }
+
+  .konten-aplikasi,
+  .area-scroll-aplikasi {
+    height: auto;
     min-height: 0;
-    padding: 24px;
-    overflow: hidden;
-    align-items: stretch;
+    padding-right: 0;
+    overflow: visible;
+  }
+
+  .halaman-aplikasi {
+    min-height: auto;
+    padding-bottom: 20px;
+  }
+
+  .kepala-aplikasi {
+    position: relative;
+    top: auto;
+  }
+
+  #formKelas button[type="submit"] {
+    position: sticky;
+    bottom: 12px;
+    z-index: 3;
+  }
+
+  #formSemester .baris-tombol-form {
+    position: static;
+  }
+
+  #formSemester button[type="submit"] {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 30;
+    width: min(220px, calc(100vw - 36px));
+  }
+
+  #halamanSemester {
+    padding-bottom: 108px;
   }
 }
 

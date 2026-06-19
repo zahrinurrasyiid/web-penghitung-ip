@@ -1,4 +1,5 @@
 const AplikasiIPgrade = (function () {
+  const apiBackend = window.IPgradeAPI || null;
   const KUNCI_AKUN = "ipgrade_akun";
   const KUNCI_SESI = "ipgrade_sesi";
   const KUNCI_KELAS = "ipgrade_kelas";
@@ -190,6 +191,10 @@ const AplikasiIPgrade = (function () {
   }
 
   function ambilSemuaAkun() {
+    if (apiBackend) {
+      return apiBackend.keadaan.user ? [Object.assign({ provider: "email", kunciAkun: apiBackend.keadaan.user.email }, apiBackend.keadaan.user)] : [];
+    }
+
     const daftarAkun = bacaJson(KUNCI_AKUN, []);
     const daftarTernormalisasi = daftarAkun.map(normalisasiAkun);
 
@@ -201,26 +206,56 @@ const AplikasiIPgrade = (function () {
   }
 
   function simpanSemuaAkun(daftarAkun) {
+    if (apiBackend) {
+      return;
+    }
     simpanJson(KUNCI_AKUN, daftarAkun);
   }
 
   function ambilSesiAktif() {
+    if (apiBackend) {
+      return apiBackend.ambilToken() ? ((apiBackend.keadaan.user && apiBackend.keadaan.user.email) || "__backend__") : "";
+    }
     return String(localStorage.getItem(KUNCI_SESI) || "").trim();
   }
 
   function simpanSesiAktif(username) {
+    if (apiBackend) {
+      return;
+    }
     localStorage.setItem(KUNCI_SESI, username);
   }
 
   function hapusSesiAktif() {
+    if (apiBackend) {
+      apiBackend.hapusToken();
+    }
     localStorage.removeItem(KUNCI_SESI);
   }
 
   function ambilSemuaProfil() {
+    if (apiBackend) {
+      const user = apiBackend.keadaan.user;
+      if (!user) {
+        return {};
+      }
+      return {
+        [user.email]: {
+          nama: user.nama || user.name || "",
+          nim: user.nim || "",
+          kelas: user.kelas || user.class_name || "",
+          dibuatPada: user.created_at || Date.now(),
+          diperbaruiPada: user.updated_at || Date.now()
+        }
+      };
+    }
     return bacaJson(KUNCI_PROFIL, {});
   }
 
   function simpanSemuaProfil(daftarProfil) {
+    if (apiBackend) {
+      return;
+    }
     simpanJson(KUNCI_PROFIL, daftarProfil);
   }
 
@@ -230,6 +265,16 @@ const AplikasiIPgrade = (function () {
   }
 
   function simpanProfilPengguna(kunciAkun, profil) {
+    if (apiBackend) {
+      apiBackend.keadaan.user = Object.assign({}, apiBackend.keadaan.user || {}, {
+        nama: profil.nama,
+        name: profil.nama,
+        nim: profil.nim,
+        kelas: profil.kelas,
+        class_name: profil.kelas
+      });
+      return;
+    }
     const semuaProfil = ambilSemuaProfil();
     semuaProfil[kunciAkun] = Object.assign({}, semuaProfil[kunciAkun] || {}, profil, {
       diperbaruiPada: Date.now()
@@ -238,10 +283,20 @@ const AplikasiIPgrade = (function () {
   }
 
   function ambilSemuaKelas() {
+    if (apiBackend) {
+      return {
+        [ambilSesiAktif()]: apiBackend.keadaan.classes || []
+      };
+    }
     return bacaJson(KUNCI_KELAS, {});
   }
 
   function simpanSemuaKelas(dataKelas) {
+    if (apiBackend) {
+      const daftarKelas = dataKelas[ambilSesiAktif()] || [];
+      apiBackend.keadaan.classes = daftarKelas;
+      return apiBackend.syncClasses(daftarKelas);
+    }
     simpanJson(KUNCI_KELAS, dataKelas);
   }
 
@@ -279,12 +334,28 @@ const AplikasiIPgrade = (function () {
   }
 
   function simpanKelasPengguna(username, daftarKelas) {
+    if (apiBackend) {
+      const daftarTernormalisasi = daftarKelas.map(normalisasiKelas);
+      apiBackend.keadaan.classes = daftarTernormalisasi;
+      return apiBackend.syncClasses(daftarTernormalisasi);
+    }
     const semuaKelas = ambilSemuaKelas();
     semuaKelas[username] = daftarKelas;
     simpanSemuaKelas(semuaKelas);
   }
 
   function cariAkun(identitas) {
+    if (apiBackend) {
+      const user = apiBackend.keadaan.user;
+      if (!user) {
+        return null;
+      }
+      const targetBackend = String(identitas || "").trim().toLowerCase();
+      return normalisasiEmail(user.email) === targetBackend || String(user.username || "").trim().toLowerCase() === targetBackend
+        ? Object.assign({ provider: "email", kunciAkun: user.email }, user)
+        : null;
+    }
+
     const target = String(identitas || "").trim().toLowerCase();
     return ambilSemuaAkun().find(function (akun) {
       return String(akun.kunciAkun || "").trim().toLowerCase() === target ||
@@ -298,16 +369,28 @@ const AplikasiIPgrade = (function () {
   }
 
   function ambilAkunAktif() {
+    if (apiBackend) {
+      const user = apiBackend.keadaan.user;
+      return user ? Object.assign({ provider: "email", kunciAkun: user.email }, user) : null;
+    }
     return cariAkun(ambilSesiAktif());
   }
 
   function profilAktifLengkap() {
+    if (apiBackend) {
+      const user = apiBackend.keadaan.user;
+      return Boolean(user && String(user.nama || user.name || "").trim());
+    }
     const kunciAkun = ambilSesiAktif();
     const profil = ambilProfilPengguna(kunciAkun);
     return Boolean(String(profil.nama || "").trim());
   }
 
   function ambilNamaTampilPengguna(kunciAkun) {
+    if (apiBackend) {
+      const user = apiBackend.keadaan.user;
+      return String((user && (user.nama || user.name || user.email)) || "-").trim();
+    }
     const profil = ambilProfilPengguna(kunciAkun);
     const akun = cariAkun(kunciAkun);
     return String(profil.nama || (akun && (akun.email || akun.username)) || kunciAkun || "-").trim();
@@ -439,6 +522,26 @@ const AplikasiIPgrade = (function () {
     }
     resetTombolLihatPassword();
     tampilkanLangkahAuth("awal");
+  }
+
+  async function migrasiDataLokalJikaAda() {
+    if (!apiBackend || !apiBackend.keadaan.user) {
+      return;
+    }
+
+    const email = normalisasiEmail(apiBackend.keadaan.user.email);
+    const kunciLegacy = buatKunciAkun("email", email);
+    const semuaKelasLegacy = bacaJson(KUNCI_KELAS, {});
+    const daftarKelasLegacy = semuaKelasLegacy[email] || semuaKelasLegacy[kunciLegacy] || [];
+
+    if (!apiBackend.keadaan.classes.length && daftarKelasLegacy.length) {
+      await apiBackend.syncClasses(daftarKelasLegacy.map(normalisasiKelas));
+    }
+
+    localStorage.removeItem(KUNCI_AKUN);
+    localStorage.removeItem(KUNCI_KELAS);
+    localStorage.removeItem(KUNCI_PROFIL);
+    localStorage.removeItem(KUNCI_SESI);
   }
 
   function tampilkanInputEmail() {
@@ -809,7 +912,7 @@ const AplikasiIPgrade = (function () {
       });
     });
 
-    simpanKelasPengguna(username, daftarBaru);
+    return simpanKelasPengguna(username, daftarBaru);
   }
 
   function resetTimerKelasKeSatuHari(username, idKelas) {
@@ -825,7 +928,7 @@ const AplikasiIPgrade = (function () {
       });
     });
 
-    simpanKelasPengguna(username, daftarBaru);
+    return simpanKelasPengguna(username, daftarBaru);
   }
 
   function renderSidebar(halamanAktif) {
@@ -1085,12 +1188,15 @@ const AplikasiIPgrade = (function () {
     }
 
     elemen.daftarKelasManajemen.innerHTML = daftarKelas.map(function (kelas) {
+      const daftarMahasiswa = kelas.daftarMahasiswa || [];
+      const kelasScrollMahasiswa = daftarMahasiswa.length > 2 ? " daftar-mahasiswa-kelas-scroll" : "";
+
       return [
         "<article class='kartu-kelas-manajemen' data-id-kelas='" + kelas.idKelas + "'>",
           "<div class='kepala-kelas-manajemen'>",
             "<div>",
               "<span class='label-kartu'>" + amankanHtml(kelas.namaKelas) + "</span>",
-              "<p class='teks-tipis'>" + (kelas.daftarMahasiswa || []).length + "/" + BATAS_MAHASISWA_PER_KELAS + " mahasiswa</p>",
+              "<p class='teks-tipis'>" + daftarMahasiswa.length + "/" + BATAS_MAHASISWA_PER_KELAS + " mahasiswa</p>",
               "<p class='teks-tipis'>Countdown: <strong class='teks-waktu-kelas' data-teks-waktu-kelas='" + kelas.idKelas + "'>" + formatWaktuSisa(Math.max(0, kelas.kedaluwarsaPada - Date.now())) + "</strong></p>",
             "</div>",
             "<div class='baris-tombol-kecil'>",
@@ -1103,9 +1209,9 @@ const AplikasiIPgrade = (function () {
               return "<button type='button' class='tombol tombol-garis tombol-mini' data-aksi='tambah-jam-kelas' data-id-kelas='" + kelas.idKelas + "' data-tambahan='" + opsi.nilai + "'>" + opsi.label + "</button>";
             }).join(""),
           "</div>",
-          "<div class='daftar-mahasiswa-kelas'>",
-            (kelas.daftarMahasiswa || []).length
-              ? kelas.daftarMahasiswa.map(function (mahasiswa) {
+          "<div class='daftar-mahasiswa-kelas" + kelasScrollMahasiswa + "'>",
+            daftarMahasiswa.length
+              ? daftarMahasiswa.map(function (mahasiswa) {
                   return [
                     "<div class='baris-mahasiswa' data-id-mahasiswa='" + mahasiswa.idMahasiswa + "'>",
                       "<div>",
@@ -1290,23 +1396,10 @@ const AplikasiIPgrade = (function () {
     }
 
     const ringkasan = hitungRingkasanMahasiswa(mahasiswa);
-    pesanKosong.classList.toggle("tersembunyi", ringkasan.daftarSemesterTerurut.length > 0);
+    pesanKosong.classList.add("tersembunyi");
 
-    kontainerProfil.innerHTML = [
-      buatKartuIdentitas("Nama Kelas", kelas.namaKelas),
-      buatKartuIdentitas("Nama Mahasiswa", mahasiswa.nama),
-      buatKartuIdentitas("NIM Mahasiswa", mahasiswa.nim)
-    ].join("");
-
-    kontainerStatistik.innerHTML = [
-      buatKartuRingkasan("Total SKS", String(ringkasan.totalSksKeseluruhan), "Akumulasi seluruh SKS mahasiswa ini."),
-      buatKartuRingkasan("Jumlah Semester", String(ringkasan.daftarSemesterTerurut.length), "Semester diurutkan otomatis dari kecil ke besar."),
-      buatKartuRingkasan(
-        "IPK Mahasiswa",
-        ringkasan.ipk === null ? "-" : formatAngka(ringkasan.ipk),
-        ringkasan.ipk === null ? "IPK belum tersedia, minimal 2 semester" : "IPK dihitung dari semua semester mahasiswa."
-      )
-    ].join("");
+    kontainerProfil.innerHTML = buatRingkasanHasilTerpilih(kelas, mahasiswa, ringkasan);
+    kontainerStatistik.innerHTML = "";
 
     if (!ringkasan.daftarSemesterTerurut.length) {
       elemen.daftarAccordionSemester.innerHTML = "";
@@ -1319,7 +1412,7 @@ const AplikasiIPgrade = (function () {
       const idPanel = "panel-" + semester.idSemester;
       return [
         "<article class='item-akordeon'>",
-          "<button type='button' class='tombol-akordeon' data-aksi='buka-akordeon' data-target-panel='" + idPanel + "'>",
+          "<button type='button' class='tombol-akordeon' data-aksi='buka-akordeon' data-target-panel='" + idPanel + "' aria-controls='" + idPanel + "' aria-expanded='false'>",
             "<div class='kepala-akordeon-semester'>",
               "<div>",
                 "<span class='label-kartu'>Semester " + semester.nomorSemester + "</span>",
@@ -1327,9 +1420,9 @@ const AplikasiIPgrade = (function () {
               "</div>",
               "<span class='teks-tipis'>" + semester.totalSksSemester + " SKS</span>",
             "</div>",
-            "<span class='teks-tipis'>Buka detail</span>",
+            "<span class='teks-tipis label-toggle-akordeon'>Buka detail</span>",
           "</button>",
-          "<div id='" + idPanel + "' class='isi-akordeon'>",
+          "<div id='" + idPanel + "' class='isi-akordeon' aria-hidden='true'>",
             "<div class='tabel-detail-semester'>",
               "<div class='baris-tabel-detail kepala'><span>Mata Kuliah</span><span>SKS</span><span>Nilai</span></div>",
               semester.daftarMataKuliah.map(function (mataKuliah) {
@@ -1351,6 +1444,30 @@ const AplikasiIPgrade = (function () {
       "<article class='kartu-identitas-hasil'>",
         "<span class='label-kartu'>" + amankanHtml(label) + "</span>",
         "<strong class='angka-ringkasan-hasil'>" + amankanHtml(nilai) + "</strong>",
+      "</article>"
+    ].join("");
+  }
+
+  function buatRingkasanHasilTerpilih(kelas, mahasiswa, ringkasan) {
+    const jumlahSemester = ringkasan.daftarSemesterTerurut.length;
+    const nilaiAkademik = jumlahSemester >= 2
+      ? "<p><strong>IPK :</strong> " + formatAngka(ringkasan.ipk) + "</p>"
+      : jumlahSemester === 1
+        ? "<p><strong>IP :</strong> " + formatAngka(ringkasan.daftarSemesterTerurut[0].ips) + "</p>"
+        : "<p class='status-ringkasan-hasil'>Belum ada data</p>";
+
+    return [
+      "<article class='kartu-identitas-hasil kartu-ringkasan-terpilih'>",
+        "<div class='baris-meta-hasil'>",
+          "<span><strong>Kelas:</strong> " + amankanHtml(kelas.namaKelas) + "</span>",
+          "<span><strong>Jumlah SKS:</strong> " + ringkasan.totalSksKeseluruhan + "</span>",
+          "<span><strong>Jumlah Semester:</strong> " + jumlahSemester + "</span>",
+        "</div>",
+        "<div class='baris-identitas-hasil'>",
+          "<p><strong>Nama:</strong> " + amankanHtml(mahasiswa.nama) + "</p>",
+          "<p><strong>NIM :</strong> " + amankanHtml(mahasiswa.nim) + "</p>",
+          nilaiAkademik,
+        "</div>",
       "</article>"
     ].join("");
   }
@@ -1636,12 +1753,20 @@ const AplikasiIPgrade = (function () {
     });
 
     document.getElementById("tombolLoginGoogle").addEventListener("click", function () {
+      if (apiBackend) {
+        tampilkanNotifikasi("Login Google demo dinonaktifkan untuk backend lokal. Gunakan login email.", "peringatan");
+        return;
+      }
       const akun = ambilAtauBuatAkunSosial("google");
       simpanSesiAktif(akun.kunciAkun);
       lanjutkanSetelahAutentikasi();
     });
 
     document.getElementById("tombolLoginFacebook").addEventListener("click", function () {
+      if (apiBackend) {
+        tampilkanNotifikasi("Login Facebook demo dinonaktifkan untuk backend lokal. Gunakan login email.", "peringatan");
+        return;
+      }
       const akun = ambilAtauBuatAkunSosial("facebook");
       simpanSesiAktif(akun.kunciAkun);
       lanjutkanSetelahAutentikasi();
@@ -1665,12 +1790,19 @@ const AplikasiIPgrade = (function () {
       siapkanRegisterEmail(keadaan.emailAuthAktif);
     });
 
-    elemen.formLogin.addEventListener("submit", function (event) {
+    elemen.formLogin.addEventListener("submit", async function (event) {
       event.preventDefault();
       const password = document.getElementById("loginPassword").value;
 
       try {
         const email = validasiEmail(keadaan.emailAuthAktif);
+        if (apiBackend) {
+          await apiBackend.login(email, password);
+          await migrasiDataLokalJikaAda();
+          lanjutkanSetelahAutentikasi();
+          return;
+        }
+
         const akun = cariAkun(email);
 
         if (!String(password || "").trim()) {
@@ -1696,7 +1828,7 @@ const AplikasiIPgrade = (function () {
       }
     });
 
-    elemen.formRegister.addEventListener("submit", function (event) {
+    elemen.formRegister.addEventListener("submit", async function (event) {
       event.preventDefault();
       const email = document.getElementById("registerEmail").value;
       const password = document.getElementById("registerPassword").value;
@@ -1705,6 +1837,13 @@ const AplikasiIPgrade = (function () {
       try {
         const emailNormal = validasiEmail(email);
         validasiPassword(password, verifikasiPassword);
+
+        if (apiBackend) {
+          await apiBackend.register(emailNormal, password);
+          await migrasiDataLokalJikaAda();
+          lanjutkanSetelahAutentikasi();
+          return;
+        }
 
         if (akunSudahTerdaftar(emailNormal)) {
           throw new Error("Akun dengan email ini sudah ada. Login dengan password akun tersebut.");
@@ -1721,7 +1860,7 @@ const AplikasiIPgrade = (function () {
       }
     });
 
-    elemen.formProfil.addEventListener("submit", function (event) {
+    elemen.formProfil.addEventListener("submit", async function (event) {
       event.preventDefault();
       const kunciAkun = ambilSesiAktif();
       const nama = document.getElementById("inputNamaProfil").value.trim();
@@ -1737,12 +1876,17 @@ const AplikasiIPgrade = (function () {
           throw new Error("Nama wajib diisi.");
         }
 
-        simpanProfilPengguna(kunciAkun, {
+        const profilBaru = {
           nama: nama,
           nim: nim,
           kelas: kelas,
           dibuatPada: ambilProfilPengguna(kunciAkun).dibuatPada || Date.now()
-        });
+        };
+        if (apiBackend) {
+          await apiBackend.updateProfile(profilBaru);
+        } else {
+          simpanProfilPengguna(kunciAkun, profilBaru);
+        }
         tampilkanHalamanAplikasi("dashboard");
       } catch (error) {
         tampilkanNotifikasi(error.message, "gagal");
@@ -1755,7 +1899,7 @@ const AplikasiIPgrade = (function () {
       tampilkanNotifikasi("Kamu sudah logout dari IPgrade.", "peringatan");
     });
 
-    document.getElementById("formKelas").addEventListener("submit", function (event) {
+    document.getElementById("formKelas").addEventListener("submit", async function (event) {
       event.preventDefault();
       const username = ambilSesiAktif();
       const idKelas = document.getElementById("idKelasTersembunyi").value;
@@ -1789,7 +1933,7 @@ const AplikasiIPgrade = (function () {
           daftarKelas = daftarKelas.concat(buatKelasBaru(namaKelas));
         }
 
-        simpanKelasPengguna(username, daftarKelas);
+        await simpanKelasPengguna(username, daftarKelas);
         resetFormKelas();
         renderSemuaHalaman();
         tampilkanNotifikasi("Data kelas berhasil disimpan.", "sukses");
@@ -1798,7 +1942,7 @@ const AplikasiIPgrade = (function () {
       }
     });
 
-    document.getElementById("formMahasiswa").addEventListener("submit", function (event) {
+    document.getElementById("formMahasiswa").addEventListener("submit", async function (event) {
       event.preventDefault();
       const username = ambilSesiAktif();
       const idKelas = document.getElementById("pilihanKelasMahasiswa").value;
@@ -1859,7 +2003,7 @@ const AplikasiIPgrade = (function () {
           });
         });
 
-        simpanKelasPengguna(username, daftarKelas);
+        await simpanKelasPengguna(username, daftarKelas);
         resetFormMahasiswa();
         renderSemuaHalaman();
         tampilkanNotifikasi("Data mahasiswa berhasil disimpan.", "sukses");
@@ -1894,7 +2038,7 @@ const AplikasiIPgrade = (function () {
       resetFormSemester();
     });
 
-    document.getElementById("formSemester").addEventListener("submit", function (event) {
+    document.getElementById("formSemester").addEventListener("submit", async function (event) {
       event.preventDefault();
       const username = ambilSesiAktif();
       const idKelas = document.getElementById("pilihanKelasSemester").value;
@@ -2024,7 +2168,7 @@ const AplikasiIPgrade = (function () {
           return kelasBaru;
         });
 
-        simpanKelasPengguna(username, daftarKelas);
+        await simpanKelasPengguna(username, daftarKelas);
         resetFormSemester();
         renderSemuaHalaman();
         tampilkanNotifikasi(infoResetTimer ? "Edit ke-3 tercapai. Timer kelas di-reset menjadi 1 hari lagi." : "Data semester berhasil disimpan.", "sukses");
@@ -2033,7 +2177,7 @@ const AplikasiIPgrade = (function () {
       }
     });
 
-    elemen.daftarKelasManajemen.addEventListener("click", function (event) {
+    elemen.daftarKelasManajemen.addEventListener("click", async function (event) {
       const tombol = event.target.closest("[data-aksi]");
       if (!tombol) {
         return;
@@ -2054,7 +2198,7 @@ const AplikasiIPgrade = (function () {
           const daftarKelas = ambilKelasPengguna(username).filter(function (kelas) {
             return kelas.idKelas !== idKelas;
           });
-          simpanKelasPengguna(username, daftarKelas);
+          await simpanKelasPengguna(username, daftarKelas);
           resetFormKelas();
           resetFormMahasiswa();
           renderSemuaHalaman();
@@ -2079,7 +2223,7 @@ const AplikasiIPgrade = (function () {
               diperbaruiPada: Date.now()
             });
           });
-          simpanKelasPengguna(username, daftarKelas);
+          await simpanKelasPengguna(username, daftarKelas);
           resetFormMahasiswa();
           renderSemuaHalaman();
           tampilkanNotifikasi("Mahasiswa beserta data semester miliknya berhasil dihapus.", "peringatan");
@@ -2087,7 +2231,7 @@ const AplikasiIPgrade = (function () {
         }
 
         if (aksi === "tambah-jam-kelas") {
-          tambahJamKelas(username, idKelas, Number(tombol.getAttribute("data-tambahan")));
+          await tambahJamKelas(username, idKelas, Number(tombol.getAttribute("data-tambahan")));
           renderSemuaHalaman();
           tampilkanNotifikasi("Waktu kedaluwarsa kelas berhasil ditambah.", "sukses");
         }
@@ -2096,18 +2240,18 @@ const AplikasiIPgrade = (function () {
       }
     });
 
-    elemen.daftarCountdownKelasDashboard.addEventListener("click", function (event) {
+    elemen.daftarCountdownKelasDashboard.addEventListener("click", async function (event) {
       const tombol = event.target.closest("[data-aksi='tambah-jam-kelas']");
       if (!tombol) {
         return;
       }
 
-      tambahJamKelas(ambilSesiAktif(), tombol.getAttribute("data-id-kelas"), Number(tombol.getAttribute("data-tambahan")));
+      await tambahJamKelas(ambilSesiAktif(), tombol.getAttribute("data-id-kelas"), Number(tombol.getAttribute("data-tambahan")));
       renderSemuaHalaman();
       tampilkanNotifikasi("Waktu kedaluwarsa kelas berhasil ditambah.", "sukses");
     });
 
-    elemen.daftarSemesterTersimpan.addEventListener("click", function (event) {
+    elemen.daftarSemesterTersimpan.addEventListener("click", async function (event) {
       const tombol = event.target.closest("[data-aksi]");
       if (!tombol) {
         return;
@@ -2207,7 +2351,7 @@ const AplikasiIPgrade = (function () {
           return kelasBaru;
         });
 
-        simpanKelasPengguna(username, daftarKelas);
+        await simpanKelasPengguna(username, daftarKelas);
         resetFormSemester();
         renderSemuaHalaman();
 
@@ -2228,13 +2372,37 @@ const AplikasiIPgrade = (function () {
       }
 
       const panel = document.getElementById(tombol.getAttribute("data-target-panel"));
-      if (panel) {
-        panel.classList.toggle("aktif");
+      if (!panel) {
+        return;
+      }
+
+      const sedangTerbuka = panel.classList.contains("aktif");
+      elemen.daftarAccordionSemester.querySelectorAll(".isi-akordeon.aktif").forEach(function (panelTerbuka) {
+        panelTerbuka.classList.remove("aktif");
+        panelTerbuka.setAttribute("aria-hidden", "true");
+      });
+
+      elemen.daftarAccordionSemester.querySelectorAll("[data-aksi='buka-akordeon']").forEach(function (tombolAkordeon) {
+        tombolAkordeon.setAttribute("aria-expanded", "false");
+        const label = tombolAkordeon.querySelector(".label-toggle-akordeon");
+        if (label) {
+          label.textContent = "Buka detail";
+        }
+      });
+
+      if (!sedangTerbuka) {
+        panel.classList.add("aktif");
+        panel.setAttribute("aria-hidden", "false");
+        tombol.setAttribute("aria-expanded", "true");
+        const labelAktif = tombol.querySelector(".label-toggle-akordeon");
+        if (labelAktif) {
+          labelAktif.textContent = "Tutup detail";
+        }
       }
     });
   }
 
-  function mulaiAplikasi() {
+  async function mulaiAplikasi() {
     terapkanTema(ambilTemaTersimpan());
     aktifkanAnimasiJudul();
     mulaiAnimasiKetikan();
@@ -2243,6 +2411,11 @@ const AplikasiIPgrade = (function () {
     resetFormKelas();
     resetFormMahasiswa();
     resetFormSemester();
+
+    if (apiBackend) {
+      await apiBackend.muatAwal();
+      await migrasiDataLokalJikaAda();
+    }
 
     if (ambilSesiAktif()) {
       tampilkanHalamanAplikasi("dashboard");
